@@ -563,6 +563,41 @@ body {
   margin-top:10px;
 }
 .szpay-scan-btn:active { background:rgba(3,218,198,.1); }
+.szpay-wallet { background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:16px; }
+.szpay-wallet .spw-title { font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px; }
+.szpay-wallet .spw-linked { display:flex;flex-direction:column;gap:6px;margin-bottom:10px; }
+.spw-card {
+  display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg4);border-radius:12px;
+  border:1px solid var(--border);font-size:13px;
+}
+.spw-card .spwc-icon { font-size:22px;width:28px;text-align:center; }
+.spw-card .spwc-info { flex:1; }
+.spw-card .spwc-name { font-weight:600; }
+.spw-card .spwc-detail { font-size:11px;color:var(--fg-dim); }
+.spw-card .spwc-remove { background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px; }
+.spw-card.default { border-color:var(--accent); }
+.spw-card .spwc-default { font-size:10px;color:var(--accent);font-weight:700; }
+.spw-add-card { background:var(--bg4);border:1px dashed var(--border);border-radius:12px;padding:12px;margin-bottom:8px; }
+.spw-add-card label { font-size:11px;color:var(--fg-dim);display:block;margin-bottom:3px;font-weight:600; }
+.spw-add-card input {
+  width:100%;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:8px;padding:8px 10px;font-size:14px;outline:none;margin-bottom:6px;
+}
+.spw-add-card input:focus { border-color:var(--accent); }
+.spw-add-card .spw-card-row { display:flex;gap:6px; }
+.spw-add-card .spw-card-row input { flex:1; }
+.spw-add-btn {
+  width:100%;padding:10px;border:none;border-radius:10px;font-size:13px;font-weight:700;
+  cursor:pointer;margin-bottom:4px;
+}
+.spw-add-btn.primary { background:var(--accent);color:#000; }
+.spw-add-btn.outline { background:transparent;border:1px solid var(--border);color:var(--fg); }
+.spw-quick-links { display:flex;flex-wrap:wrap;gap:6px;margin-top:8px; }
+.spw-quick-link {
+  padding:8px 12px;border:1px solid var(--border);border-radius:20px;
+  background:var(--bg3);color:var(--fg);font-size:12px;cursor:pointer;font-weight:600;
+}
+.spw-quick-link:active { background:var(--bg4); }
 .szpay-history { margin-top:16px; }
 .szpay-history .sph-title { font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px; }
 .szpay-tx { display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border); }
@@ -750,8 +785,12 @@ body {
         <div class="szpay-route-btns">
           <div class="szpay-route-btn active" onclick="setSZPRoute('cashapp',this)">💲 Cash App</div>
           <div class="szpay-route-btn" onclick="setSZPRoute('venmo',this)">Ⓥ Venmo</div>
-          <div class="szpay-route-btn" onclick="setSZPRoute('crypto',this)">🪙 Crypto</div>
+          <div class="szpay-route-btn" onclick="setSZPRoute('card',this)">💳 Card</div>
           <div class="szpay-route-btn" onclick="setSZPRoute('googlepay',this)">🔷 Google Pay</div>
+          <div class="szpay-route-btn" onclick="setSZPRoute('mercadopago',this)">🟢 Mercado Pago</div>
+          <div class="szpay-route-btn" onclick="setSZPRoute('phonepe',this)">📱 PhonePe</div>
+          <div class="szpay-route-btn" onclick="setSZPRoute('wechat',this)">💬 WeChat Pay</div>
+          <div class="szpay-route-btn" onclick="setSZPRoute('crypto',this)">🪙 Crypto</div>
         </div>
 
         <label>Note (optional)</label>
@@ -779,12 +818,46 @@ body {
       </div>
     </div>
 
+    <!-- LINKED PAYMENT METHODS -->
+    <div class="szpay-wallet" id="szpWalletSection">
+      <div class="spw-title">💳 My Payment Methods</div>
+      <div class="spw-linked" id="spwLinkedList">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Add Card Form (collapsed by default) -->
+      <div class="spw-add-card" id="spwAddCardForm" style="display:none">
+        <label>Card Number</label>
+        <input type="text" id="spwCardNum" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNum(this)">
+        <div class="spw-card-row">
+          <div style="flex:1"><label>Expiry</label><input type="text" id="spwCardExp" placeholder="MM/YY" maxlength="5" oninput="formatCardExp(this)"></div>
+          <div style="flex:1"><label>CVV</label><input type="password" id="spwCardCVV" placeholder="•••" maxlength="4"></div>
+        </div>
+        <label>Name on Card</label>
+        <input type="text" id="spwCardName" placeholder="John Doe">
+        <button class="spw-add-btn primary" onclick="saveLinkedCard()">Save Card</button>
+        <div style="font-size:10px;color:var(--fg-dim);text-align:center;margin-top:4px;">🔒 Card info is stored locally on your device only. Never sent to any server.</div>
+      </div>
+
+      <button class="spw-add-btn outline" onclick="toggleAddCard()">➕ Add Debit / Credit Card</button>
+
+      <div class="spw-quick-links">
+        <div class="spw-quick-link" onclick="linkQuickMethod('cashapp')">💲 Cash App</div>
+        <div class="spw-quick-link" onclick="linkQuickMethod('venmo')">Ⓥ Venmo</div>
+        <div class="spw-quick-link" onclick="linkQuickMethod('googlepay')">🔷 Google Pay</div>
+        <div class="spw-quick-link" onclick="linkQuickMethod('mercadopago')">🟢 Mercado Pago</div>
+        <div class="spw-quick-link" onclick="linkQuickMethod('phonepe')">📱 PhonePe</div>
+        <div class="spw-quick-link" onclick="linkQuickMethod('wechat')">💬 WeChat Pay</div>
+      </div>
+    </div>
+
     <!-- SCAN MODE: Scanner -->
     <div id="szpScanPanel" style="display:none">
       <div style="text-align:center;padding:20px 0;">
         <div style="font-size:48px;margin-bottom:12px;">📷</div>
         <div style="font-size:15px;font-weight:600;margin-bottom:8px;">Scan a SubZero Pay QR Code</div>
-        <div style="font-size:13px;color:var(--fg-dim);margin-bottom:20px;">Point your camera at another user's payment QR to send them money.</div>
+        <div style="font-size:13px;color:var(--fg-dim);margin-bottom:12px;">Point your camera at another user's payment QR to send them money.</div>
+        <div style="font-size:12px;color:var(--fg-dim);margin-bottom:16px;">Payment will be charged to your <b style="color:var(--accent)" id="szpDefaultMethod">linked method</b>.</div>
         <button class="szpay-generate-btn" onclick="startSZPayScan()">📸 Open Camera & Scan</button>
         <div style="margin-top:16px;font-size:12px;color:var(--fg-dim);">A processing fee of <span style="color:var(--orange);font-weight:700;">2.9% + $0.30</span> is included in every transaction.</div>
       </div>
@@ -1232,7 +1305,7 @@ function generateSZPayQR() {
   document.getElementById('szpQRImg').src = qrUrl;
   document.getElementById('szpQRAmount').textContent = '$' + f.total.toFixed(2);
   document.getElementById('szpQRFee').textContent = 'Includes $' + f.fee.toFixed(2) + ' SubZero fee';
-  const routeNames = { cashapp: '💲 Cash App', venmo: 'Ⓥ Venmo', crypto: '🪙 Crypto', googlepay: '🔷 Google Pay' };
+  const routeNames = { cashapp: '💲 Cash App', venmo: 'Ⓥ Venmo', crypto: '🪙 Crypto', googlepay: '🔷 Google Pay', mercadopago: '🟢 Mercado Pago', phonepe: '📱 PhonePe', wechat: '💬 WeChat Pay', card: '💳 Card' };
   document.getElementById('szpQRRoute').textContent = 'Pay via: ' + (routeNames[szpRoute] || szpRoute);
   document.getElementById('szpQRNote').textContent = note;
   document.getElementById('szpQRResult').style.display = '';
@@ -1257,9 +1330,136 @@ function shareSZPayQR() {
 }
 
 function startSZPayScan() {
-  // Reuse the existing QR scanner but handle SubZero pay URIs
   startQRScanner();
 }
+
+// ── Linked Payment Methods ──
+let linkedMethods = JSON.parse(localStorage.getItem('szp_methods') || '[]');
+
+function saveLinkedMethods() {
+  localStorage.setItem('szp_methods', JSON.stringify(linkedMethods));
+  renderLinkedMethods();
+}
+
+function renderLinkedMethods() {
+  const el = document.getElementById('spwLinkedList');
+  if (!linkedMethods.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--fg-dim);font-size:12px;padding:8px;">No payment methods linked yet.</div>';
+    updateDefaultMethodLabel();
+    return;
+  }
+  el.innerHTML = linkedMethods.map((m, i) => {
+    const icons = { card:'💳', cashapp:'💲', venmo:'Ⓥ', googlepay:'🔷', mercadopago:'🟢', phonepe:'📱', wechat:'💬' };
+    const names = { card:'Card', cashapp:'Cash App', venmo:'Venmo', googlepay:'Google Pay', mercadopago:'Mercado Pago', phonepe:'PhonePe', wechat:'WeChat Pay' };
+    const isDefault = i === 0;
+    return `<div class="spw-card${isDefault ? ' default' : ''}" onclick="setDefaultMethod(${i})">
+      <div class="spwc-icon">${icons[m.type] || '💳'}</div>
+      <div class="spwc-info">
+        <div class="spwc-name">${names[m.type] || m.type}${isDefault ? ' <span class="spwc-default">DEFAULT</span>' : ''}</div>
+        <div class="spwc-detail">${m.detail}</div>
+      </div>
+      <button class="spwc-remove" onclick="event.stopPropagation();removeMethod(${i})">✕</button>
+    </div>`;
+  }).join('');
+  updateDefaultMethodLabel();
+}
+
+function updateDefaultMethodLabel() {
+  const el = document.getElementById('szpDefaultMethod');
+  if (!el) return;
+  if (linkedMethods.length) {
+    const names = { card:'Card', cashapp:'Cash App', venmo:'Venmo', googlepay:'Google Pay', mercadopago:'Mercado Pago', phonepe:'PhonePe', wechat:'WeChat Pay' };
+    el.textContent = names[linkedMethods[0].type] || linkedMethods[0].type;
+  } else {
+    el.textContent = 'no method linked';
+  }
+}
+
+function setDefaultMethod(idx) {
+  const m = linkedMethods.splice(idx, 1)[0];
+  linkedMethods.unshift(m);
+  saveLinkedMethods();
+}
+
+function removeMethod(idx) {
+  if (confirm('Remove this payment method?')) {
+    linkedMethods.splice(idx, 1);
+    saveLinkedMethods();
+  }
+}
+
+function toggleAddCard() {
+  const form = document.getElementById('spwAddCardForm');
+  form.style.display = form.style.display === 'none' ? '' : 'none';
+}
+
+function formatCardNum(el) {
+  let v = el.value.replace(/\D/g, '').substring(0, 16);
+  el.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+}
+function formatCardExp(el) {
+  let v = el.value.replace(/\D/g, '').substring(0, 4);
+  if (v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
+  el.value = v;
+}
+
+function saveLinkedCard() {
+  const num = document.getElementById('spwCardNum').value.replace(/\s/g, '');
+  const exp = document.getElementById('spwCardExp').value;
+  const name = document.getElementById('spwCardName').value.trim();
+  if (num.length < 13) { alert('Enter a valid card number'); return; }
+  if (!exp || exp.length < 4) { alert('Enter expiry date'); return; }
+  const last4 = num.slice(-4);
+  // Detect card brand
+  let brand = 'Card';
+  if (num[0] === '4') brand = 'Visa';
+  else if (['51','52','53','54','55'].includes(num.substring(0,2)) || (parseInt(num.substring(0,4)) >= 2221 && parseInt(num.substring(0,4)) <= 2720)) brand = 'Mastercard';
+  else if (['34','37'].includes(num.substring(0,2))) brand = 'Amex';
+  else if (num.substring(0,4) === '6011' || num.substring(0,2) === '65') brand = 'Discover';
+
+  linkedMethods.push({
+    type: 'card',
+    detail: brand + ' •••• ' + last4 + ' | ' + exp,
+    last4, brand, exp,
+    name: name || 'Card Holder',
+    // Store encrypted-ish (base64) — not true encryption, just local obfuscation
+    _enc: btoa(num)
+  });
+  saveLinkedMethods();
+  // Clear form
+  document.getElementById('spwCardNum').value = '';
+  document.getElementById('spwCardExp').value = '';
+  document.getElementById('spwCardCVV').value = '';
+  document.getElementById('spwCardName').value = '';
+  document.getElementById('spwAddCardForm').style.display = 'none';
+  alert('✅ ' + brand + ' •••• ' + last4 + ' saved!');
+}
+
+function linkQuickMethod(type) {
+  const names = { cashapp:'Cash App', venmo:'Venmo', googlepay:'Google Pay', mercadopago:'Mercado Pago', phonepe:'PhonePe', wechat:'WeChat Pay' };
+  const prompts = {
+    cashapp: 'Enter your $Cashtag (e.g. $YourName):',
+    venmo: 'Enter your Venmo username (e.g. @YourName):',
+    googlepay: 'Enter the email linked to your Google Pay:',
+    mercadopago: 'Enter your Mercado Pago email or phone:',
+    phonepe: 'Enter your PhonePe UPI ID or phone number:',
+    wechat: 'Enter your WeChat Pay ID:'
+  };
+  // Check if already linked
+  if (linkedMethods.some(m => m.type === type)) {
+    alert(names[type] + ' is already linked!'); return;
+  }
+  const handle = prompt(prompts[type]);
+  if (!handle || !handle.trim()) return;
+  linkedMethods.push({ type, detail: handle.trim() });
+  saveLinkedMethods();
+  // Also store in legacy keys for QR generation
+  if (type === 'cashapp') localStorage.setItem('sz_cashapp', handle.trim());
+  if (type === 'venmo') localStorage.setItem('sz_venmo', handle.trim());
+  alert('✅ ' + names[type] + ' linked: ' + handle.trim());
+}
+
+renderLinkedMethods();
 
 function addSZPTx(type, amount, fee, route, note) {
   const tx = {
@@ -1279,7 +1479,7 @@ function renderSZPTx() {
     el.innerHTML = '<div style="text-align:center;color:var(--fg-dim);font-size:13px;padding:20px;">No SubZero Pay transactions yet.</div>';
     return;
   }
-  const routeNames = { cashapp: '💲 Cash App', venmo: 'Ⓥ Venmo', crypto: '🪙 Crypto', googlepay: '🔷 Google Pay' };
+  const routeNames = { cashapp: '💲 Cash App', venmo: 'Ⓥ Venmo', crypto: '🪙 Crypto', googlepay: '🔷 Google Pay', mercadopago: '🟢 Mercado Pago', phonepe: '📱 PhonePe', wechat: '💬 WeChat Pay', card: '💳 Card' };
   el.innerHTML = szpTxHistory.slice(0, 15).map(tx => {
     const icon = tx.type === 'requested' ? '📲' : tx.type === 'paid' ? '✅' : '↗️';
     const cls = tx.type === 'paid' ? 'sent' : 'received';
