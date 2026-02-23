@@ -694,6 +694,72 @@ body {
   background:var(--bg3);color:var(--fg);font-size:12px;font-weight:600;cursor:pointer;
 }
 .contacts-footer button:active { background:var(--bg4); }
+/* ── SUBZERO MAIL SCREEN ───────────────── */
+.szmail-body { flex:1;overflow-y:auto;padding:16px; }
+.szmail-hero { text-align:center;padding:16px 0 10px; }
+.szmail-hero .szm-icon { font-size:48px;margin-bottom:8px; }
+.szmail-hero .szm-title { font-size:22px;font-weight:800;color:var(--accent);letter-spacing:1px; }
+.szmail-hero .szm-sub { font-size:13px;color:var(--fg-dim);margin-top:4px; }
+.szmail-setup {
+  background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;
+}
+.szmail-setup label { font-size:12px;color:var(--fg-dim);display:block;margin-bottom:4px;font-weight:600; }
+.szmail-setup input {
+  width:100%;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;font-size:15px;outline:none;margin-bottom:10px;
+}
+.szmail-setup input:focus { border-color:var(--accent); }
+.szmail-linked {
+  display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg4);
+  border-radius:12px;border:1px solid var(--accent);margin-bottom:10px;
+}
+.szmail-linked .szml-icon { font-size:24px; }
+.szmail-linked .szml-info { flex:1; }
+.szmail-linked .szml-addr { font-size:15px;font-weight:700;color:var(--accent); }
+.szmail-linked .szml-label { font-size:11px;color:var(--fg-dim); }
+.szmail-linked .szml-edit {
+  background:none;border:1px solid var(--border);color:var(--fg);border-radius:8px;
+  padding:6px 10px;font-size:12px;cursor:pointer;
+}
+.szmail-qr-section {
+  text-align:center;background:var(--bg3);border:1px solid var(--border);
+  border-radius:16px;padding:20px;margin-bottom:16px;
+}
+.szmail-qr-section .sqr-title { font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px; }
+.szmail-qr-section img { width:200px;height:200px;border-radius:12px;border:3px solid var(--accent);margin-bottom:10px; }
+.szmail-qr-section .sqr-addr { font-size:13px;color:var(--fg);font-weight:600;word-break:break-all; }
+.szmail-qr-section .sqr-hint { font-size:11px;color:var(--fg-dim);margin-top:6px; }
+.szmail-actions { display:flex;gap:8px;margin-bottom:16px; }
+.szmail-action-btn {
+  flex:1;padding:14px 10px;border:2px solid var(--border);border-radius:14px;
+  background:var(--bg3);color:var(--fg);text-align:center;cursor:pointer;
+}
+.szmail-action-btn:active { background:var(--bg4); }
+.szmail-action-btn .sma-icon { font-size:28px;display:block;margin-bottom:4px; }
+.szmail-action-btn .sma-label { font-size:12px;font-weight:700; }
+.szmail-send-section {
+  background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;
+}
+.szmail-send-section .sms-title { font-size:14px;font-weight:700;color:var(--accent);margin-bottom:10px; }
+.szmail-send-section label { font-size:12px;color:var(--fg-dim);display:block;margin-bottom:4px;font-weight:600; }
+.szmail-send-section input, .szmail-send-section select {
+  width:100%;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;font-size:14px;outline:none;margin-bottom:10px;
+}
+.szmail-send-section input:focus, .szmail-send-section select:focus { border-color:var(--accent); }
+.szmail-send-btn {
+  width:100%;padding:14px;border:none;border-radius:12px;
+  background:var(--accent);color:#000;font-size:15px;font-weight:800;cursor:pointer;
+}
+.szmail-send-btn:active { background:#04f0d8; }
+.szmail-tx { display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border); }
+.szmail-tx .smt-icon { font-size:22px; }
+.szmail-tx .smt-info { flex:1; }
+.szmail-tx .smt-to { font-size:13px;font-weight:600; }
+.szmail-tx .smt-time { font-size:11px;color:var(--fg-dim); }
+.szmail-tx .smt-amount { font-size:14px;font-weight:700; }
+.szmail-tx .smt-amount.sent { color:var(--red); }
+.szmail-tx .smt-amount.received { color:var(--green); }
 /* ── INSTRUCTIONS SCREEN ─────────────────── */
 .instructions-body { flex:1;overflow-y:auto;padding:20px; }
 .inst-step {
@@ -769,6 +835,7 @@ body {
     <div class="drawer-item" onclick="showScreen('chat');closeDrawer()"><span class="di-icon">💬</span>Spine Rip Chat</div>
     <div class="drawer-item" onclick="showScreen('szpay');closeDrawer()"><span class="di-icon">💸</span>SubZero Pay</div>
     <div class="drawer-item" onclick="showScreen('contacts');closeDrawer()"><span class="di-icon">👥</span>Contacts</div>
+    <div class="drawer-item" onclick="showScreen('szmail');closeDrawer()"><span class="di-icon">📧</span>SubZero Mail</div>
     <div class="drawer-item" onclick="showScreen('wallet');closeDrawer()"><span class="di-icon">💰</span>Crypto Wallet</div>
     <div class="drawer-item" onclick="showScreen('share');closeDrawer()"><span class="di-icon">📥</span>Download Desktop</div>
     <div class="drawer-item" onclick="showScreen('instructions');closeDrawer()"><span class="di-icon">📖</span>Instructions</div>
@@ -829,6 +896,16 @@ body {
           <span class="cc-time">P2P</span>
         </div>
         <div class="cc-preview">Send & receive payments via QR code</div>
+      </div>
+    </div>
+    <div class="chat-card" onclick="showScreen('szmail')">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#00b4d8,#0077b6);display:flex;align-items:center;justify-content:center;font-size:24px;">📧</div>
+      <div class="cc-info">
+        <div class="cc-top">
+          <span class="cc-name">SubZero Mail</span>
+          <span class="cc-time">QR</span>
+        </div>
+        <div class="cc-preview">Email QR codes & stablecoin transfers</div>
       </div>
     </div>
     <div class="chat-card" onclick="showScreen('contacts')">
@@ -966,6 +1043,96 @@ body {
       <div id="szpTxList">
         <div style="text-align:center;color:var(--fg-dim);font-size:13px;padding:20px;">No SubZero Pay transactions yet.<br>Request or scan to get started!</div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SUBZERO MAIL SCREEN ═══════ -->
+<div class="screen" id="screen-szmail">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">SubZero Mail</div><div class="status">Email • QR Sharing • Stablecoins</div></div>
+  </div>
+  <div class="szmail-body">
+    <div class="szmail-hero">
+      <div class="szm-icon">📧</div>
+      <div class="szm-title">SubZero Mail</div>
+      <div class="szm-sub">Share your email via QR • Send crypto to emails</div>
+    </div>
+
+    <!-- Email Setup / Linked -->
+    <div id="szmailLinkedSection" style="display:none">
+      <div class="szmail-linked">
+        <div class="szml-icon">✉️</div>
+        <div class="szml-info">
+          <div class="szml-addr" id="szmailAddr">you@subzero.xyz</div>
+          <div class="szml-label">Linked email address</div>
+        </div>
+        <button class="szml-edit" onclick="editSZMail()">✏️ Edit</button>
+      </div>
+    </div>
+
+    <div class="szmail-setup" id="szmailSetupSection">
+      <label>Your Email Address</label>
+      <input type="email" id="szmailInput" placeholder="you@subzero.xyz">
+      <label>Display Name</label>
+      <input type="text" id="szmailName" placeholder="Your Name">
+      <label>Crypto Wallet Address (for receiving stablecoins)</label>
+      <input type="text" id="szmailWallet" placeholder="0x... or SOL address">
+      <button class="szmail-send-btn" onclick="saveSZMail()">Link Email Address</button>
+    </div>
+
+    <!-- My Email QR Code -->
+    <div class="szmail-qr-section" id="szmailQRSection" style="display:none">
+      <div class="sqr-title">📱 My Email QR Code</div>
+      <img id="szmailQRImg" src="" alt="Email QR">
+      <div class="sqr-addr" id="szmailQRAddr"></div>
+      <div class="sqr-hint">Show this QR to share your email • Others scan to add you</div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="szmail-actions" id="szmailActions" style="display:none">
+      <div class="szmail-action-btn" onclick="shareSZMailQR()">
+        <span class="sma-icon">📤</span>
+        <span class="sma-label">Share QR</span>
+      </div>
+      <div class="szmail-action-btn" onclick="scanEmailQR()">
+        <span class="sma-icon">📷</span>
+        <span class="sma-label">Scan Email QR</span>
+      </div>
+      <div class="szmail-action-btn" onclick="copyEmailAddr()">
+        <span class="sma-icon">📋</span>
+        <span class="sma-label">Copy Email</span>
+      </div>
+    </div>
+
+    <!-- Send Stablecoins to Email -->
+    <div class="szmail-send-section" id="szmailSendSection" style="display:none">
+      <div class="sms-title">🪙 Send Stablecoins to Email</div>
+      <label>Recipient Email</label>
+      <input type="email" id="szmSendTo" placeholder="friend@subzero.xyz">
+      <label>Amount (USD)</label>
+      <input type="number" id="szmSendAmount" placeholder="0.00" step="0.01" min="0.01">
+      <label>Stablecoin</label>
+      <select id="szmSendCoin">
+        <option value="USDT">USDT (Tether)</option>
+        <option value="USDC">USDC (Circle)</option>
+        <option value="DAI">DAI</option>
+        <option value="BUSD">BUSD</option>
+      </select>
+      <label>Note (optional)</label>
+      <input type="text" id="szmSendNote" placeholder="What's this for?">
+      <button class="szmail-send-btn" onclick="sendCoinToEmail()">🚀 Generate Transfer QR</button>
+      <div id="szmSendResult" style="display:none;text-align:center;margin-top:12px;">
+        <img id="szmSendQRImg" src="" alt="Transfer QR" style="width:180px;height:180px;border-radius:10px;border:2px solid var(--accent);">
+        <div style="font-size:12px;color:var(--fg-dim);margin-top:6px;">Recipient scans this QR to claim the transfer</div>
+      </div>
+    </div>
+
+    <!-- Email Transfer History -->
+    <div id="szmailHistory" style="display:none">
+      <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px;">📨 Transfer History</div>
+      <div id="szmailTxList"></div>
     </div>
   </div>
 </div>
@@ -1648,6 +1815,227 @@ function renderSZPTx() {
   }).join('');
 }
 renderSZPTx();
+
+// ══════════════════════════════════════════════
+//  SUBZERO MAIL
+// ══════════════════════════════════════════════
+let szmailData = JSON.parse(localStorage.getItem('sz_mail') || 'null');
+let szmailTxHistory = JSON.parse(localStorage.getItem('sz_mail_tx') || '[]');
+
+function initSZMail() {
+  if (szmailData && szmailData.email) {
+    showMailLinked();
+  } else {
+    document.getElementById('szmailSetupSection').style.display = '';
+    document.getElementById('szmailLinkedSection').style.display = 'none';
+    document.getElementById('szmailQRSection').style.display = 'none';
+    document.getElementById('szmailActions').style.display = 'none';
+    document.getElementById('szmailSendSection').style.display = 'none';
+    document.getElementById('szmailHistory').style.display = 'none';
+  }
+}
+
+function showMailLinked() {
+  document.getElementById('szmailSetupSection').style.display = 'none';
+  document.getElementById('szmailLinkedSection').style.display = '';
+  document.getElementById('szmailAddr').textContent = szmailData.email;
+  // Generate email QR
+  const uri = 'subzero:email?' + new URLSearchParams({
+    email: szmailData.email,
+    name: szmailData.name || '',
+    wallet: szmailData.wallet || ''
+  }).toString();
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(uri) + '&bgcolor=0a0a12&color=03dac6';
+  document.getElementById('szmailQRImg').src = qrUrl;
+  document.getElementById('szmailQRAddr').textContent = szmailData.email;
+  document.getElementById('szmailQRSection').style.display = '';
+  document.getElementById('szmailActions').style.display = '';
+  document.getElementById('szmailSendSection').style.display = '';
+  // Show history if any
+  renderSZMailTx();
+}
+
+function saveSZMail() {
+  const email = document.getElementById('szmailInput').value.trim();
+  const name = document.getElementById('szmailName').value.trim();
+  const wallet = document.getElementById('szmailWallet').value.trim();
+  if (!email || !email.includes('@')) { alert('Enter a valid email address'); return; }
+  szmailData = { email, name, wallet, linkedAt: Date.now() };
+  localStorage.setItem('sz_mail', JSON.stringify(szmailData));
+  showMailLinked();
+  alert('✅ ' + email + ' linked to SubZero!');
+}
+
+function editSZMail() {
+  document.getElementById('szmailSetupSection').style.display = '';
+  document.getElementById('szmailLinkedSection').style.display = 'none';
+  if (szmailData) {
+    document.getElementById('szmailInput').value = szmailData.email || '';
+    document.getElementById('szmailName').value = szmailData.name || '';
+    document.getElementById('szmailWallet').value = szmailData.wallet || '';
+  }
+}
+
+function shareSZMailQR() {
+  if (!szmailData) return;
+  const img = document.getElementById('szmailQRImg');
+  if (navigator.share) {
+    navigator.share({
+      title: 'SubZero Mail — ' + szmailData.email,
+      text: 'Scan this QR to get my email and send me stablecoins via SubZero! ' + szmailData.email,
+      url: img.src
+    }).catch(() => {});
+  } else {
+    navigator.clipboard?.writeText(szmailData.email);
+    alert('Email copied: ' + szmailData.email);
+  }
+}
+
+function scanEmailQR() {
+  // Use the existing QR scanner — the onQRDetected handler will catch subzero:email URIs
+  startQRScanner();
+}
+
+function copyEmailAddr() {
+  if (!szmailData) return;
+  navigator.clipboard?.writeText(szmailData.email);
+  alert('📋 Copied: ' + szmailData.email);
+}
+
+// Send stablecoins to an email via QR
+function sendCoinToEmail() {
+  const to = document.getElementById('szmSendTo').value.trim();
+  const amount = parseFloat(document.getElementById('szmSendAmount').value || '0');
+  const coin = document.getElementById('szmSendCoin').value;
+  const note = document.getElementById('szmSendNote').value.trim();
+
+  if (!to || !to.includes('@')) { alert('Enter recipient email'); return; }
+  if (amount <= 0) { alert('Enter an amount'); return; }
+
+  const f = calcSZPFee(amount);
+
+  // Build transfer URI
+  const params = new URLSearchParams({
+    from: szmailData ? szmailData.email : 'unknown',
+    to: to,
+    amount: f.total.toFixed(2),
+    base: f.amount.toFixed(2),
+    fee: f.fee.toFixed(2),
+    coin: coin,
+    note: note || 'SubZero Mail Transfer',
+    wallet: szmailData ? szmailData.wallet : '',
+    ts: Date.now().toString()
+  });
+  const uri = 'subzero:mailtx?' + params.toString();
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(uri) + '&bgcolor=0a0a12&color=03dac6';
+
+  document.getElementById('szmSendQRImg').src = qrUrl;
+  document.getElementById('szmSendResult').style.display = '';
+
+  // Log transaction
+  szmailTxHistory.unshift({
+    type: 'sent', to, from: szmailData ? szmailData.email : 'you',
+    amount: f.amount, fee: f.fee, total: f.total, coin, note: note || 'Transfer',
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    date: new Date().toLocaleDateString()
+  });
+  if (szmailTxHistory.length > 50) szmailTxHistory = szmailTxHistory.slice(0, 50);
+  localStorage.setItem('sz_mail_tx', JSON.stringify(szmailTxHistory));
+  renderSZMailTx();
+}
+
+function renderSZMailTx() {
+  const el = document.getElementById('szmailTxList');
+  const histDiv = document.getElementById('szmailHistory');
+  if (!szmailTxHistory.length) {
+    histDiv.style.display = 'none';
+    return;
+  }
+  histDiv.style.display = '';
+  el.innerHTML = szmailTxHistory.slice(0, 20).map(tx => {
+    const icon = tx.type === 'sent' ? '↗️' : '↙️';
+    const cls = tx.type === 'sent' ? 'sent' : 'received';
+    const sign = tx.type === 'sent' ? '-' : '+';
+    const who = tx.type === 'sent' ? tx.to : tx.from;
+    return `<div class="szmail-tx">
+      <div class="smt-icon">${icon}</div>
+      <div class="smt-info">
+        <div class="smt-to">${tx.type === 'sent' ? 'Sent to' : 'From'} ${escHtml(who)}</div>
+        <div class="smt-time">${tx.date} ${tx.time} • ${tx.coin} • ${tx.note || ''}</div>
+      </div>
+      <div class="smt-amount ${cls}">${sign}$${parseFloat(tx.total).toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+// Handle scanned email QR codes (called from onQRDetected)
+function handleEmailQR(data) {
+  try {
+    const url = new URL(data.replace('subzero:email?', 'https://x.com/?'));
+    const email = url.searchParams.get('email');
+    const name = url.searchParams.get('name') || '';
+    const wallet = url.searchParams.get('wallet') || '';
+    if (!email) return false;
+
+    // Add to contacts if not exists
+    if (typeof szContacts !== 'undefined') {
+      const exists = szContacts.some(c => c.email === email);
+      if (!exists) {
+        szContacts.push({
+          name: name || email.split('@')[0],
+          phone: '',
+          email: email,
+          payHandle: wallet ? 'wallet:' + wallet : '',
+          notes: 'Added via SubZero Mail QR scan',
+          source: 'qr',
+          addedAt: Date.now()
+        });
+        saveContacts();
+      }
+    }
+
+    // Offer to send crypto
+    if (confirm('📧 Found: ' + email + (name ? ' (' + name + ')' : '') + '\n\nAdded to Contacts!\n\nSend stablecoins to this email?')) {
+      showScreen('szmail');
+      document.getElementById('szmSendTo').value = email;
+    }
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function handleMailTxQR(data) {
+  try {
+    const url = new URL(data.replace('subzero:mailtx?', 'https://x.com/?'));
+    const from = url.searchParams.get('from');
+    const to = url.searchParams.get('to');
+    const amount = url.searchParams.get('amount');
+    const coin = url.searchParams.get('coin');
+    const note = url.searchParams.get('note');
+    const wallet = url.searchParams.get('wallet');
+    if (!from || !amount) return false;
+
+    alert('🪙 Stablecoin Transfer\n\nFrom: ' + from + '\nAmount: $' + amount + ' ' + coin + '\nNote: ' + note +
+      (wallet ? '\n\nSend ' + coin + ' to wallet:\n' + wallet : '\n\nNo wallet address provided.'));
+
+    // Log as received
+    szmailTxHistory.unshift({
+      type: 'received', to, from, amount: parseFloat(url.searchParams.get('base') || amount),
+      fee: parseFloat(url.searchParams.get('fee') || 0),
+      total: parseFloat(amount), coin, note: note || 'Transfer',
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      date: new Date().toLocaleDateString()
+    });
+    localStorage.setItem('sz_mail_tx', JSON.stringify(szmailTxHistory));
+    renderSZMailTx();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+initSZMail();
 
 // ══════════════════════════════════════════════
 //  CONTACTS
@@ -2570,6 +2958,16 @@ function onQRDetected(text){
   }
   if(text.includes('venmo.com/')){
     if(confirm('Open Venmo to pay?')) window.open(text,'_blank');
+    return;
+  }
+  // SubZero email QR
+  if(text.startsWith('subzero:email')){
+    handleEmailQR(text);
+    return;
+  }
+  // SubZero mail stablecoin transfer QR
+  if(text.startsWith('subzero:mailtx')){
+    handleMailTxQR(text);
     return;
   }
   // Fallback: show raw content
