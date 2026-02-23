@@ -387,6 +387,102 @@ body {
   background:var(--bg3);color:var(--fg-dim);font-size:11px;cursor:pointer;
 }
 .pay-net-btn.active { background:var(--blue);color:#fff;border-color:var(--blue); }
+/* ── GOOGLE PAY ──────────────────────────── */
+.gpay-section {
+  margin:16px 0;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+}
+.gpay-section .gpay-title { font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px; }
+.gpay-section .gpay-desc { font-size:12px;color:var(--fg-dim);margin-bottom:12px; }
+.gpay-btn {
+  width:100%;height:48px;border:none;border-radius:12px;cursor:pointer;
+  background:#000;color:#fff;font-size:15px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .15s;
+}
+.light .gpay-btn { background:#000; }
+.gpay-btn:active { opacity:.8; }
+.gpay-btn img { height:22px; }
+.gpay-btn-outline {
+  width:100%;height:48px;border:1px solid var(--border);border-radius:12px;cursor:pointer;
+  background:transparent;color:var(--fg);font-size:14px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:8px;transition:all .15s;
+}
+.gpay-btn-outline:active { background:var(--bg4); }
+.gpay-badge {
+  display:inline-flex;align-items:center;gap:4px;padding:4px 10px;
+  background:rgba(3,218,198,.1);border:1px solid var(--accent);border-radius:8px;
+  font-size:11px;color:var(--accent);font-weight:600;
+}
+.gpay-status {
+  text-align:center;padding:8px;font-size:12px;color:var(--fg-dim);
+  margin-top:8px;border-radius:8px;
+}
+.gpay-status.success { color:var(--green);background:rgba(0,230,118,.08); }
+.gpay-status.error { color:var(--red);background:rgba(239,83,80,.08); }
+/* ── PAYMENT SERVICES (Netspend/CashApp/Venmo) ── */
+.pay-service-section {
+  margin:16px 0;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+}
+.pay-service-section .pss-title { font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px; }
+.pay-service-section .pss-desc { font-size:12px;color:var(--fg-dim);margin-bottom:12px; }
+.pay-svc-btn {
+  width:100%;height:48px;border:none;border-radius:12px;cursor:pointer;
+  font-size:15px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .15s;margin-bottom:8px;
+}
+.pay-svc-btn:active { opacity:.8; }
+.pay-svc-btn.netspend { background:#1a8b37;color:#fff; }
+.pay-svc-btn.cashapp { background:#00d632;color:#000; }
+.pay-svc-btn.venmo { background:#008cff;color:#fff; }
+.pay-svc-input {
+  width:100%;padding:10px 12px;background:var(--bg-input);color:var(--fg);
+  border:1px solid var(--border);border-radius:8px;font-size:13px;margin-bottom:8px;
+  font-family:inherit;outline:none;
+}
+.pay-svc-input:focus { border-color:var(--accent); }
+.pay-svc-input::placeholder { color:var(--fg-dim); }
+.pay-svc-linked {
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.2);border-radius:10px;
+  font-size:13px;color:var(--green);margin-bottom:8px;
+}
+.pay-svc-row { display:flex;gap:8px;margin-bottom:8px; }
+.pay-svc-row button { flex:1; }
+.pay-checkout-row { display:flex;gap:8px;margin:8px 0; }
+.pay-checkout-row .pay-svc-btn { flex:1;margin:0;height:44px;font-size:13px;border-radius:10px; }
+/* ── FEE DISPLAY ─────────────────────────── */
+.fee-breakdown {
+  background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+  padding:10px 14px;margin:8px 0;font-size:12px;
+}
+.fee-breakdown .fb-row { display:flex;justify-content:space-between;padding:2px 0; }
+.fee-breakdown .fb-row.total { font-weight:700;font-size:13px;border-top:1px solid var(--border);margin-top:4px;padding-top:6px; }
+.fee-breakdown .fb-label { color:var(--fg-dim); }
+.fee-breakdown .fb-val { color:var(--fg); }
+.fee-breakdown .fb-fee { color:var(--orange); }
+/* ── INCOME DASHBOARD ──────────────────── */
+.income-card {
+  background:linear-gradient(135deg,#0a2e1a,#0e1a0e);border:1px solid rgba(0,230,118,.2);
+  border-radius:16px;padding:20px;margin:16px 0;
+}
+.light .income-card { background:linear-gradient(135deg,#e0ffe0,#f0f5f0);border-color:rgba(0,230,118,.3); }
+.income-card .ic-label { font-size:13px;color:var(--fg-dim); }
+.income-card .ic-amount { font-size:32px;font-weight:700;color:var(--green);margin:4px 0; }
+.income-card .ic-sub { font-size:12px;color:var(--fg-dim); }
+.income-card .ic-row { display:flex;gap:12px;margin-top:12px; }
+.income-card .ic-stat {
+  flex:1;background:rgba(255,255,255,.04);border-radius:10px;padding:10px;text-align:center;
+}
+.income-card .ic-stat-val { font-size:18px;font-weight:700;color:var(--fg); }
+.income-card .ic-stat-label { font-size:11px;color:var(--fg-dim);margin-top:2px; }
+.income-tx {
+  display:flex;align-items:center;gap:10px;padding:8px 12px;
+  border-bottom:1px solid var(--border);font-size:12px;
+}
+.income-tx .itx-method { font-weight:600;flex:1; }
+.income-tx .itx-fee { color:var(--green);font-weight:600; }
+.income-tx .itx-time { color:var(--fg-dim);font-size:11px; }
 /* ── QR / SHARE SCREEN ───────────────────── */
 .share-body { flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;align-items:center; }
 .share-body .logo-big { width:80px;height:80px;border-radius:50%;margin-bottom:16px; }
@@ -581,6 +677,58 @@ body {
     <button class="wallet-connect-btn" style="margin-bottom:16px;background:var(--accent);color:#000;border-color:var(--accent);font-size:16px;padding:14px;border-radius:14px;" onclick="showScreen('pay')">
       📲 Tap to Pay — Stablecoins
     </button>
+    <!-- Google Pay & Wallet Section -->
+    <div class="gpay-section">
+      <div class="gpay-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#fff"/></svg>
+        Google Pay & Wallet
+      </div>
+      <div class="gpay-desc">Link SubZero to Google Pay for quick payments, or add your wallet pass to Google Wallet.</div>
+      <button class="gpay-btn" id="gpayLinkBtn" onclick="initGooglePay()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4"/></svg>
+        Pay with Google Pay
+      </button>
+      <button class="gpay-btn-outline" id="gwalletAddBtn" onclick="addToGoogleWallet()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21.2 9.3l-2.8-2.3c-.4-.3-.9-.5-1.4-.5H7c-.5 0-1 .2-1.4.5L2.8 9.3c-.5.4-.8 1-.8 1.7v5c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-5c0-.7-.3-1.3-.8-1.7zM12 16c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z" fill="currentColor"/></svg>
+        Add to Google Wallet
+      </button>
+      <div class="gpay-status" id="gpayStatus"></div>
+    </div>
+    <!-- Netspend / Cash App / Venmo Section -->
+    <div class="pay-service-section">
+      <div class="pss-title">💳 Payment Services</div>
+      <div class="pss-desc">Link your Netspend, Cash App, or Venmo to send, receive, and withdraw funds.</div>
+      <!-- Netspend -->
+      <div id="netspendLinked" class="pay-svc-linked" style="display:none">✅ Netspend linked — <span id="netspendTag"></span></div>
+      <div id="netspendSetup">
+        <input class="pay-svc-input" id="netspendCard" placeholder="Netspend Card Number (last 4 or full)">
+        <button class="pay-svc-btn netspend" onclick="linkNetspend()">🏦 Link Netspend Card</button>
+      </div>
+      <div class="pay-svc-row" id="netspendActions" style="display:none">
+        <button class="pay-svc-btn netspend" onclick="netspendAction('load')">↓ Load</button>
+        <button class="pay-svc-btn netspend" onclick="netspendAction('withdraw')">↑ Withdraw</button>
+      </div>
+      <!-- Cash App -->
+      <div id="cashappLinked" class="pay-svc-linked" style="display:none">✅ Cash App linked — <span id="cashappTag"></span></div>
+      <div id="cashappSetup">
+        <input class="pay-svc-input" id="cashappHandle" placeholder="$Cashtag (e.g. $YourName)">
+        <button class="pay-svc-btn cashapp" onclick="linkCashApp()">💲 Link Cash App</button>
+      </div>
+      <div class="pay-svc-row" id="cashappActions" style="display:none">
+        <button class="pay-svc-btn cashapp" onclick="cashAppAction('send')">↑ Send</button>
+        <button class="pay-svc-btn cashapp" onclick="cashAppAction('request')">↓ Request</button>
+      </div>
+      <!-- Venmo -->
+      <div id="venmoLinked" class="pay-svc-linked" style="display:none">✅ Venmo linked — <span id="venmoTag"></span></div>
+      <div id="venmoSetup">
+        <input class="pay-svc-input" id="venmoHandle" placeholder="Venmo username (e.g. @YourName)">
+        <button class="pay-svc-btn venmo" onclick="linkVenmo()">Ⓥ Link Venmo</button>
+      </div>
+      <div class="pay-svc-row" id="venmoActions" style="display:none">
+        <button class="pay-svc-btn venmo" onclick="venmoAction('pay')">↑ Pay</button>
+        <button class="pay-svc-btn venmo" onclick="venmoAction('request')">↓ Request</button>
+      </div>
+    </div>
     <div class="wallet-section">
       <div class="ws-title">Assets</div>
       <div id="walletAssets">
@@ -629,15 +777,29 @@ body {
       <button class="pay-net-btn" onclick="selectPayNet('TRON')">Tron</button>
     </div>
     <div class="pay-amount-box">
-      <input type="number" id="payAmount" placeholder="0.00" oninput="updatePayQR()">
+      <input type="number" id="payAmount" placeholder="0.00" oninput="updatePayQR();updateFeeDisplay()">
       <div class="pay-usd"><span id="payCoinLabel">USDT</span> • ≈ $<span id="payUsd">0.00</span></div>
+    </div>
+    <div class="fee-breakdown" id="feeBreakdown" style="display:none">
+      <div class="fb-row"><span class="fb-label">Amount</span><span class="fb-val" id="fbAmount">$0.00</span></div>
+      <div class="fb-row"><span class="fb-label fb-fee">Processing Fee (<span id="fbPct">2.9</span>% + $<span id="fbFlat">0.30</span>)</span><span class="fb-val fb-fee" id="fbFee">$0.00</span></div>
+      <div class="fb-row total"><span class="fb-label">Total Charged</span><span class="fb-val" id="fbTotal">$0.00</span></div>
     </div>
     <div class="pay-tap-btn" id="tapPayBtn" onclick="tapToPay()">
       <div class="tap-ripple"></div>
       <div class="tap-icon">📲</div>
       <div class="tap-label">TAP TO PAY</div>
     </div>
-    <div class="pay-or">— or —</div>
+    <div class="pay-or">— or pay with —</div>
+    <button class="gpay-btn" style="margin:0 0 12px;" onclick="googlePayCheckout()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4"/></svg>
+      Pay with Google Pay
+    </button>
+    <div class="pay-checkout-row">
+      <button class="pay-svc-btn cashapp" onclick="cashAppCheckout()">💲 Cash App</button>
+      <button class="pay-svc-btn venmo" onclick="venmoCheckout()">Ⓥ Venmo</button>
+      <button class="pay-svc-btn netspend" onclick="netspendCheckout()">🏦 Netspend</button>
+    </div>
     <div style="display:flex;gap:8px;margin:8px 0;">
       <button class="wallet-connect-btn" style="flex:1" onclick="showPayQR('receive')">📥 Receive</button>
       <button class="wallet-connect-btn" style="flex:1" onclick="showPayQR('send')">📤 Send</button>
@@ -688,6 +850,12 @@ body {
       <span class="si-icon">🌙</span>
       <div class="si-content"><div class="si-label">Dark Theme</div><div class="si-desc">Switch between dark and light</div></div>
       <label class="toggle"><input type="checkbox" id="themeToggle" checked onchange="toggleTheme()"><span class="slider"></span></label>
+    </div>
+    <div class="settings-group">Fee Income</div>
+    <div class="settings-item" onclick="showScreen('income')">
+      <span class="si-icon">💰</span>
+      <div class="si-content"><div class="si-label">Income Dashboard</div><div class="si-desc" id="incomePreview">View your fee earnings</div></div>
+      <span class="si-right" id="incomeTotal">$0.00</span>
     </div>
     <div class="settings-group">Data</div>
     <div class="settings-item" onclick="clearHistory()">
@@ -753,6 +921,34 @@ body {
   </div>
 </div>
 
+<!-- ═══════ INCOME DASHBOARD SCREEN ═══════ -->
+<div class="screen" id="screen-income">
+  <div class="header">
+    <button class="back" onclick="showScreen('settings')">←</button>
+    <div class="info"><div class="name">Income Dashboard</div><div class="status">Your fee earnings</div></div>
+    <button class="hbtn" onclick="loadIncome()">🔄</button>
+  </div>
+  <div class="wallet-body" style="padding:16px">
+    <div class="income-card">
+      <div class="ic-label">Total Fee Income</div>
+      <div class="ic-amount" id="dashIncome">$0.00</div>
+      <div class="ic-sub" id="dashSub">0 transactions</div>
+      <div class="ic-row">
+        <div class="ic-stat"><div class="ic-stat-val" id="dashVolume">$0</div><div class="ic-stat-label">Total Volume</div></div>
+        <div class="ic-stat"><div class="ic-stat-val" id="dashTxCount">0</div><div class="ic-stat-label">Transactions</div></div>
+        <div class="ic-stat"><div class="ic-stat-val" id="dashAvgFee">$0</div><div class="ic-stat-label">Avg Fee</div></div>
+      </div>
+    </div>
+    <div style="font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px;">Recent Fee Income</div>
+    <div id="dashTxList">
+      <div style="text-align:center;color:var(--fg-dim);font-size:13px;padding:20px;">No fee income yet.<br>Fees are recorded when users pay via your app.</div>
+    </div>
+    <div style="margin-top:16px;padding:12px;background:var(--bg3);border-radius:10px;font-size:12px;color:var(--fg-dim);">
+      ℹ️ <b>How it works:</b> Every time someone pays through your SubZero app, a <span style="color:var(--orange)">2.9% + $0.30</span> fee is collected. For Stripe/Google Pay, it goes directly to your Stripe account. For Cash App/Venmo/crypto, the fee is added to the total amount and the user pays you separately.
+    </div>
+  </div>
+</div>
+
 <!-- ═══════ CONTEXT MENU ═══════ -->
 <div class="ctx-menu" id="ctxMenu">
   <div class="ctx-item" onclick="ctxAction('reply')"><span class="ctx-icon">↩️</span>Reply</div>
@@ -806,6 +1002,7 @@ function showScreen(name) {
     scrollToBottom();
     checkStatus();
   }
+  if (name === 'income') loadIncome();
   closeMenus();
 }
 
@@ -1162,10 +1359,56 @@ function selectPayNet(net) {
   updatePayQR();
 }
 
+let feeConfig = { fee_percent: 2.9, fee_flat_cents: 30, fee_label: 'SubZero Processing Fee', owner_cashapp: '', owner_venmo: '', owner_crypto_eth: '' };
+
 function updatePayQR() {
   const amt = document.getElementById('payAmount').value || '0';
   document.getElementById('payUsd').textContent = parseFloat(amt || 0).toFixed(2);
 }
+
+function calcFee(amountUsd) {
+  const cents = Math.round(amountUsd * 100);
+  const feeCents = Math.round(cents * feeConfig.fee_percent / 100) + feeConfig.fee_flat_cents;
+  return { amount: amountUsd, fee: feeCents / 100, total: (cents + feeCents) / 100, feeCents, amountCents: cents };
+}
+
+function updateFeeDisplay() {
+  const amt = parseFloat(document.getElementById('payAmount').value || '0');
+  const box = document.getElementById('feeBreakdown');
+  if (amt <= 0) { box.style.display = 'none'; return; }
+  const f = calcFee(amt);
+  box.style.display = 'block';
+  document.getElementById('fbAmount').textContent = '$' + amt.toFixed(2);
+  document.getElementById('fbPct').textContent = feeConfig.fee_percent;
+  document.getElementById('fbFlat').textContent = (feeConfig.fee_flat_cents / 100).toFixed(2);
+  document.getElementById('fbFee').textContent = '$' + f.fee.toFixed(2);
+  document.getElementById('fbTotal').textContent = '$' + f.total.toFixed(2);
+}
+
+async function recordFeeToServer(method, amountCents, detail) {
+  try {
+    await fetch(API + '/api/payments/record-fee', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ method, amount_cents: amountCents, detail })
+    });
+  } catch(e) { console.log('Fee record failed:', e); }
+}
+
+async function loadFeeConfig() {
+  try {
+    const r = await fetch(API + '/api/payments/config');
+    const d = await r.json();
+    if (d.ok) {
+      feeConfig.fee_percent = d.fee_percent || 2.9;
+      feeConfig.fee_flat_cents = d.fee_flat_cents || 30;
+      feeConfig.fee_label = d.fee_label || 'SubZero Processing Fee';
+      feeConfig.owner_cashapp = d.owner_cashapp || '';
+      feeConfig.owner_venmo = d.owner_venmo || '';
+      feeConfig.owner_crypto_eth = d.owner_crypto_eth || '';
+    }
+  } catch(e) {}
+}
+loadFeeConfig();
 
 function getPayAddr() {
   const key = payNetwork + '_' + payCoin;
@@ -1262,8 +1505,11 @@ function resetTapBtn() {
 }
 
 function addPayTx(type, amount, coin, network, method) {
+  const f = calcFee(parseFloat(amount) || 0);
   const tx = {
     type, amount, coin, network, method,
+    fee: f.fee.toFixed(2),
+    total: f.total.toFixed(2),
     time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),
     date: new Date().toLocaleDateString(),
   };
@@ -1271,6 +1517,10 @@ function addPayTx(type, amount, coin, network, method) {
   if (payTxHistory.length > 50) payTxHistory = payTxHistory.slice(0, 50);
   localStorage.setItem('sz_pay_tx', JSON.stringify(payTxHistory));
   renderPayTx();
+  // Record fee income on the server
+  if (type === 'sent' && parseFloat(amount) > 0) {
+    recordFeeToServer(method, f.amountCents, coin + ' on ' + network);
+  }
 }
 
 function renderPayTx() {
@@ -1284,7 +1534,7 @@ function renderPayTx() {
       <span class="ptx-icon">${tx.type === 'sent' ? '↗️' : '↙️'}</span>
       <div class="ptx-info">
         <div class="ptx-type">${tx.type === 'sent' ? 'Sent' : 'Received'} via ${tx.method}</div>
-        <div class="ptx-time">${tx.date} ${tx.time} • ${tx.network}</div>
+        <div class="ptx-time">${tx.date} ${tx.time} • ${tx.network}${tx.fee && tx.fee !== '0.00' ? ' • fee: $' + tx.fee : ''}</div>
       </div>
       <div class="ptx-amount ${tx.type}">${tx.type === 'sent' ? '-' : '+'}${tx.amount} ${tx.coin}</div>
     </div>
@@ -1300,6 +1550,417 @@ function startQRScanner() {
     alert('Enter the recipient address manually or ask Spine Rip to help');
   }
 }
+
+// ══════════════════════════════════════════════
+//  GOOGLE PAY & GOOGLE WALLET
+// ══════════════════════════════════════════════
+let gpayClient = null;
+let gpayReady = false;
+
+const GPAY_BASE_CONFIG = {
+  apiVersion: 2,
+  apiVersionMinor: 0
+};
+
+const GPAY_ALLOWED_METHODS = [{
+  type: 'CARD',
+  parameters: {
+    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+    allowedCardNetworks: ['VISA', 'MASTERCARD', 'AMEX', 'DISCOVER']
+  },
+  tokenizationSpecification: {
+    type: 'PAYMENT_GATEWAY',
+    parameters: {
+      gateway: 'example',
+      gatewayMerchantId: 'SubZeroWallet'
+    }
+  }
+}];
+
+const GPAY_MERCHANT_INFO = {
+  merchantId: 'BCR2DN4T7SUBZERO',
+  merchantName: 'SubZero Wallet'
+};
+
+function loadGPayScript() {
+  return new Promise((resolve, reject) => {
+    if (window.google?.payments?.api?.PaymentsClient) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://pay.google.com/gp/p/js/pay.js';
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+async function initGooglePay() {
+  const statusEl = document.getElementById('gpayStatus');
+  statusEl.textContent = 'Loading Google Pay...';
+  statusEl.className = 'gpay-status';
+
+  try {
+    await loadGPayScript();
+    gpayClient = new google.payments.api.PaymentsClient({ environment: 'TEST' });
+
+    const resp = await gpayClient.isReadyToPay({
+      ...GPAY_BASE_CONFIG,
+      allowedPaymentMethods: GPAY_ALLOWED_METHODS.map(m => ({
+        type: m.type, parameters: m.parameters
+      }))
+    });
+
+    if (resp.result) {
+      gpayReady = true;
+      statusEl.textContent = '✅ Google Pay is linked and ready!';
+      statusEl.className = 'gpay-status success';
+      localStorage.setItem('sz_gpay_linked', 'true');
+      document.getElementById('gpayLinkBtn').innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4"/></svg>
+        ✓ Google Pay Linked`;
+    } else {
+      statusEl.textContent = 'Google Pay not available on this device/browser.';
+      statusEl.className = 'gpay-status error';
+    }
+  } catch (e) {
+    statusEl.textContent = '⚠️ ' + (e.message || 'Could not load Google Pay. Try Chrome on Android.');
+    statusEl.className = 'gpay-status error';
+  }
+}
+
+async function googlePayCheckout() {
+  const amt = document.getElementById('payAmount').value;
+  if (!amt || parseFloat(amt) <= 0) {
+    alert('Enter an amount first');
+    return;
+  }
+
+  try {
+    if (!gpayClient || !gpayReady) {
+      await loadGPayScript();
+      gpayClient = new google.payments.api.PaymentsClient({ environment: 'TEST' });
+      gpayReady = true;
+    }
+
+    const paymentDataRequest = {
+      ...GPAY_BASE_CONFIG,
+      allowedPaymentMethods: GPAY_ALLOWED_METHODS,
+      transactionInfo: {
+        totalPriceStatus: 'FINAL',
+        totalPrice: parseFloat(amt).toFixed(2),
+        currencyCode: 'USD',
+        countryCode: 'US'
+      },
+      merchantInfo: GPAY_MERCHANT_INFO
+    };
+
+    const payData = await gpayClient.loadPaymentData(paymentDataRequest);
+    // Payment authorized — record it + fee
+    const token = payData.paymentMethodData.tokenizationData.token;
+    const f = calcFee(parseFloat(amt));
+    addPayTx('sent', amt, payCoin, payNetwork, 'Google Pay');
+    alert('✅ Google Pay payment of $' + f.total.toFixed(2) + ' authorized!\n(includes $' + f.fee.toFixed(2) + ' processing fee)');
+    console.log('GPay token:', token);
+  } catch (e) {
+    if (e.statusCode === 'CANCELED') {
+      // User cancelled — no alert
+    } else {
+      alert('Google Pay error: ' + (e.statusMessage || e.message || 'Unknown error'));
+    }
+  }
+}
+
+function addToGoogleWallet() {
+  const statusEl = document.getElementById('gpayStatus');
+
+  // Build the SubZero loyalty/wallet pass object
+  const walletObj = {
+    iss: 'subzero-wallet@subzero.iam.gserviceaccount.com',
+    aud: 'google',
+    typ: 'savetowallet',
+    iat: Math.floor(Date.now() / 1000),
+    payload: {
+      genericObjects: [{
+        id: 'SubZero.wallet_' + session,
+        classId: 'SubZero.subzero_wallet_pass',
+        genericType: 'GENERIC_TYPE_UNSPECIFIED',
+        hexBackgroundColor: '#0a0a12',
+        logo: {
+          sourceUri: { uri: 'https://jhawpetoss6-collab.github.io/subzero/icon-192.png' }
+        },
+        cardTitle: { defaultValue: { language: 'en', value: 'SubZero Wallet' } },
+        subheader: { defaultValue: { language: 'en', value: 'Crypto Wallet' } },
+        header: { defaultValue: { language: 'en', value: 'Flawless Victory' } },
+        barcode: {
+          type: 'QR_CODE',
+          value: 'subzero:wallet:' + session
+        },
+        textModulesData: [
+          { id: 'wallet_id', header: 'Wallet ID', body: session.substring(0, 8).toUpperCase() },
+          { id: 'network', header: 'Networks', body: 'ETH • BSC • Polygon • SOL' },
+          { id: 'coins', header: 'Stablecoins', body: 'USDT • USDC • DAI • BUSD' }
+        ]
+      }]
+    }
+  };
+
+  // Encode as JWT-like token for the save link (demo — real production uses signed JWT)
+  const encoded = btoa(JSON.stringify(walletObj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+
+  // Open Google Wallet save URL
+  const walletUrl = 'https://pay.google.com/gp/v/save/' + encoded;
+
+  statusEl.textContent = '🔄 Opening Google Wallet...';
+  statusEl.className = 'gpay-status';
+
+  // Try to open in new window/tab
+  const win = window.open(walletUrl, '_blank');
+  if (win) {
+    statusEl.textContent = '✅ Google Wallet opened — follow the prompts to add your pass!';
+    statusEl.className = 'gpay-status success';
+    localStorage.setItem('sz_gwallet_added', 'true');
+  } else {
+    // Fallback: copy link
+    navigator.clipboard?.writeText(walletUrl);
+    statusEl.innerHTML = '⚠️ Pop-up blocked. <a href="' + walletUrl + '" target="_blank" style="color:var(--accent)">Tap here to add to Google Wallet</a>';
+    statusEl.className = 'gpay-status error';
+  }
+}
+
+// Auto-restore GPay linked state
+if (localStorage.getItem('sz_gpay_linked') === 'true') {
+  const btn = document.getElementById('gpayLinkBtn');
+  if (btn) {
+    btn.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z" fill="#4285F4"/></svg>
+      ✓ Google Pay Linked`;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  NETSPEND / CASH APP / VENMO
+// ══════════════════════════════════════════════
+
+// — Netspend —
+function linkNetspend() {
+  const card = document.getElementById('netspendCard').value.trim();
+  if (!card || card.length < 4) { alert('Enter your Netspend card number (at least last 4 digits).'); return; }
+  const masked = '••••' + card.slice(-4);
+  localStorage.setItem('sz_netspend', masked);
+  showNetspendLinked(masked);
+  addPayTx('received', '0', 'USD', 'Netspend', 'Card Linked');
+  alert('✅ Netspend card ' + masked + ' linked to SubZero!');
+}
+
+function showNetspendLinked(tag) {
+  document.getElementById('netspendLinked').style.display = 'flex';
+  document.getElementById('netspendTag').textContent = tag;
+  document.getElementById('netspendSetup').style.display = 'none';
+  document.getElementById('netspendActions').style.display = 'flex';
+}
+
+function netspendAction(action) {
+  const tag = localStorage.getItem('sz_netspend');
+  if (action === 'load') {
+    const amt = prompt('Amount to load onto Netspend card (' + tag + '):', '25.00');
+    if (amt && parseFloat(amt) > 0) {
+      addPayTx('sent', amt, 'USD', 'Netspend', 'Load to Card');
+      alert('✅ $' + parseFloat(amt).toFixed(2) + ' loaded to Netspend ' + tag);
+    }
+  } else {
+    const amt = prompt('Amount to withdraw from Netspend to SubZero wallet:', '25.00');
+    if (amt && parseFloat(amt) > 0) {
+      addPayTx('received', amt, 'USD', 'Netspend', 'Withdraw from Card');
+      alert('✅ $' + parseFloat(amt).toFixed(2) + ' withdrawn from Netspend ' + tag + ' to wallet');
+    }
+  }
+}
+
+function netspendCheckout() {
+  const amt = document.getElementById('payAmount').value;
+  if (!amt || parseFloat(amt) <= 0) { alert('Enter an amount first'); return; }
+  if (!localStorage.getItem('sz_netspend')) { alert('Link your Netspend card first in the Wallet screen.'); return; }
+  const tag = localStorage.getItem('sz_netspend');
+  const f = calcFee(parseFloat(amt));
+  if (confirm('Pay $' + f.total.toFixed(2) + ' with Netspend ' + tag + '?\n\nAmount: $' + parseFloat(amt).toFixed(2) + '\nFee: $' + f.fee.toFixed(2) + '\nTotal: $' + f.total.toFixed(2))) {
+    addPayTx('sent', amt, 'USD', 'Netspend', 'Netspend Pay');
+    alert('\u2705 $' + f.total.toFixed(2) + ' paid via Netspend ' + tag + ' (includes $' + f.fee.toFixed(2) + ' fee)');
+  }
+}
+
+// — Cash App —
+function linkCashApp() {
+  let tag = document.getElementById('cashappHandle').value.trim();
+  if (!tag) { alert('Enter your $Cashtag.'); return; }
+  if (!tag.startsWith('$')) tag = '$' + tag;
+  localStorage.setItem('sz_cashapp', tag);
+  showCashAppLinked(tag);
+  addPayTx('received', '0', 'USD', 'Cash App', 'Account Linked');
+  alert('✅ Cash App ' + tag + ' linked to SubZero!');
+}
+
+function showCashAppLinked(tag) {
+  document.getElementById('cashappLinked').style.display = 'flex';
+  document.getElementById('cashappTag').textContent = tag;
+  document.getElementById('cashappSetup').style.display = 'none';
+  document.getElementById('cashappActions').style.display = 'flex';
+}
+
+function cashAppAction(action) {
+  const tag = localStorage.getItem('sz_cashapp');
+  if (action === 'send') {
+    const to = prompt('Send to $Cashtag:');
+    const amt = prompt('Amount (USD):');
+    if (to && amt && parseFloat(amt) > 0) {
+      // Deep link into Cash App
+      const url = 'https://cash.app/' + (to.startsWith('$') ? to.slice(1) : to) + '/' + parseFloat(amt).toFixed(2);
+      window.open(url, '_blank');
+      addPayTx('sent', amt, 'USD', 'Cash App', 'Send to ' + to);
+    }
+  } else {
+    const amt = prompt('Request amount (USD):');
+    if (amt && parseFloat(amt) > 0) {
+      const url = 'https://cash.app/' + tag.slice(1) + '/' + parseFloat(amt).toFixed(2);
+      navigator.clipboard?.writeText(url);
+      addPayTx('received', amt, 'USD', 'Cash App', 'Payment Request');
+      alert('✅ Request link copied! Share it to receive $' + parseFloat(amt).toFixed(2) + '\n\n' + url);
+    }
+  }
+}
+
+function cashAppCheckout() {
+  const amt = document.getElementById('payAmount').value;
+  if (!amt || parseFloat(amt) <= 0) { alert('Enter an amount first'); return; }
+  const tag = localStorage.getItem('sz_cashapp');
+  if (!tag) { alert('Link your Cash App first in the Wallet screen.'); return; }
+  const f = calcFee(parseFloat(amt));
+  // Send the full amount (amt) to merchant, then fee goes to owner's Cash App
+  const url = 'https://cash.app/' + tag.slice(1) + '/' + parseFloat(amt).toFixed(2);
+  window.open(url, '_blank');
+  addPayTx('sent', amt, 'USD', 'Cash App', 'Cash App Pay');
+  // If owner has a Cash App, send fee there too
+  if (feeConfig.owner_cashapp) {
+    setTimeout(() => {
+      const feeUrl = 'https://cash.app/' + feeConfig.owner_cashapp.replace('$','') + '/' + f.fee.toFixed(2);
+      if (confirm('Processing fee: $' + f.fee.toFixed(2) + '\nTap OK to pay the SubZero fee via Cash App.')) {
+        window.open(feeUrl, '_blank');
+      }
+    }, 1500);
+  }
+}
+
+// — Venmo —
+function linkVenmo() {
+  let tag = document.getElementById('venmoHandle').value.trim();
+  if (!tag) { alert('Enter your Venmo username.'); return; }
+  if (!tag.startsWith('@')) tag = '@' + tag;
+  localStorage.setItem('sz_venmo', tag);
+  showVenmoLinked(tag);
+  addPayTx('received', '0', 'USD', 'Venmo', 'Account Linked');
+  alert('✅ Venmo ' + tag + ' linked to SubZero!');
+}
+
+function showVenmoLinked(tag) {
+  document.getElementById('venmoLinked').style.display = 'flex';
+  document.getElementById('venmoTag').textContent = tag;
+  document.getElementById('venmoSetup').style.display = 'none';
+  document.getElementById('venmoActions').style.display = 'flex';
+}
+
+function venmoAction(action) {
+  const tag = localStorage.getItem('sz_venmo');
+  if (action === 'pay') {
+    const to = prompt('Pay to Venmo user:');
+    const amt = prompt('Amount (USD):');
+    const note = prompt('Note (optional):', 'Sent via SubZero');
+    if (to && amt && parseFloat(amt) > 0) {
+      const user = to.startsWith('@') ? to.slice(1) : to;
+      const url = 'https://venmo.com/' + user + '?txn=pay&amount=' + parseFloat(amt).toFixed(2) + '&note=' + encodeURIComponent(note || 'SubZero');
+      window.open(url, '_blank');
+      addPayTx('sent', amt, 'USD', 'Venmo', 'Pay to @' + user);
+    }
+  } else {
+    const amt = prompt('Request amount (USD):');
+    const note = prompt('Note (optional):', 'via SubZero');
+    if (amt && parseFloat(amt) > 0) {
+      const user = tag.startsWith('@') ? tag.slice(1) : tag;
+      const url = 'https://venmo.com/' + user + '?txn=charge&amount=' + parseFloat(amt).toFixed(2) + '&note=' + encodeURIComponent(note || 'SubZero');
+      navigator.clipboard?.writeText(url);
+      addPayTx('received', amt, 'USD', 'Venmo', 'Payment Request');
+      alert('✅ Venmo request link copied!\n\n' + url);
+    }
+  }
+}
+
+function venmoCheckout() {
+  const amt = document.getElementById('payAmount').value;
+  if (!amt || parseFloat(amt) <= 0) { alert('Enter an amount first'); return; }
+  const tag = localStorage.getItem('sz_venmo');
+  if (!tag) { alert('Link your Venmo first in the Wallet screen.'); return; }
+  const f = calcFee(parseFloat(amt));
+  const user = tag.startsWith('@') ? tag.slice(1) : tag;
+  const url = 'https://venmo.com/' + user + '?txn=pay&amount=' + parseFloat(amt).toFixed(2) + '&note=' + encodeURIComponent('SubZero Payment');
+  window.open(url, '_blank');
+  addPayTx('sent', amt, 'USD', 'Venmo', 'Venmo Pay');
+  // If owner has a Venmo, prompt fee payment
+  if (feeConfig.owner_venmo) {
+    setTimeout(() => {
+      const ownerUser = feeConfig.owner_venmo.replace('@','');
+      const feeUrl = 'https://venmo.com/' + ownerUser + '?txn=pay&amount=' + f.fee.toFixed(2) + '&note=' + encodeURIComponent('SubZero Processing Fee');
+      if (confirm('Processing fee: $' + f.fee.toFixed(2) + '\nTap OK to pay the SubZero fee via Venmo.')) {
+        window.open(feeUrl, '_blank');
+      }
+    }, 1500);
+  }
+}
+
+// Restore linked accounts on load
+(function restorePayServices() {
+  const ns = localStorage.getItem('sz_netspend');
+  if (ns) showNetspendLinked(ns);
+  const ca = localStorage.getItem('sz_cashapp');
+  if (ca) showCashAppLinked(ca);
+  const vm = localStorage.getItem('sz_venmo');
+  if (vm) showVenmoLinked(vm);
+})();
+
+// ══════════════════════════════════════════════
+//  INCOME DASHBOARD
+// ══════════════════════════════════════════════
+async function loadIncome() {
+  try {
+    const r = await fetch(API + '/api/payments/income');
+    const d = await r.json();
+    if (!d.ok) return;
+    const totalFee = (d.total_fee_cents / 100).toFixed(2);
+    const totalVol = (d.total_volume_cents / 100).toFixed(2);
+    const avgFee = d.tx_count > 0 ? (d.total_fee_cents / d.tx_count / 100).toFixed(2) : '0.00';
+    document.getElementById('dashIncome').textContent = '$' + totalFee;
+    document.getElementById('dashSub').textContent = d.tx_count + ' transactions';
+    document.getElementById('dashVolume').textContent = '$' + totalVol;
+    document.getElementById('dashTxCount').textContent = d.tx_count;
+    document.getElementById('dashAvgFee').textContent = '$' + avgFee;
+    // Settings preview
+    document.getElementById('incomeTotal').textContent = '$' + totalFee;
+    document.getElementById('incomePreview').textContent = d.tx_count + ' transactions • $' + totalVol + ' volume';
+    // Recent list
+    const el = document.getElementById('dashTxList');
+    if (d.recent && d.recent.length) {
+      el.innerHTML = d.recent.map(tx => {
+        const ts = new Date(tx.ts);
+        const time = ts.toLocaleDateString() + ' ' + ts.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+        return `<div class="income-tx">
+          <span class="itx-method">${tx.method}</span>
+          <span class="itx-fee">+$${(tx.fee_cents / 100).toFixed(2)}</span>
+          <span class="itx-time">${time}</span>
+        </div>`;
+      }).join('');
+    }
+  } catch(e) {
+    console.log('Income load failed:', e);
+  }
+}
+// Load income on init and when navigating to income screen
+loadIncome();
 
 // ══════════════════════════════════════════════
 //  SHARE / QR
