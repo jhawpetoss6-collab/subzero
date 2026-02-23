@@ -1,0 +1,6 @@
+Pillow>=10.0
+qrcode[pil]>=7.4
+selenium>=4.15
+duckduckgo-search>=4.0
+alpaca-py>=0.13
+requests>=2.31

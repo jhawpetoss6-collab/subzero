@@ -1,0 +1,9 @@
+{
+  "provider": "Custom",
+  "api_key": "",
+  "api_url": "",
+  "model": "",
+  "auth_header": "Bearer",
+  "response_path": "choices.0.message.content",
+  "system_prompt": "You are a helpful assistant."
+}

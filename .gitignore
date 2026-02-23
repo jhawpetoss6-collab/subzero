@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pyo
+SubZero_Portable/
+create_shortcut.ps1
+_recolor_all.py
+warp_oz_tkinter_backup.pyw
