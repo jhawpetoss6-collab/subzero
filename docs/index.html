@@ -1058,6 +1058,7 @@ body {
       <div class="szm-icon">📧</div>
       <div class="szm-title">SubZero Mail</div>
       <div class="szm-sub">Share your email via QR • Send crypto to emails</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--fg-dim);">💰 A service fee of <span style="color:var(--orange);font-weight:700;">2.9% + $0.30</span> applies to all transfers</div>
     </div>
 
     <!-- Email Setup / Linked -->
@@ -1112,7 +1113,7 @@ body {
       <label>Recipient Email</label>
       <input type="email" id="szmSendTo" placeholder="friend@subzero.xyz">
       <label>Amount (USD)</label>
-      <input type="number" id="szmSendAmount" placeholder="0.00" step="0.01" min="0.01">
+      <input type="number" id="szmSendAmount" placeholder="0.00" step="0.01" min="0.01" oninput="updateSZMailFee()">
       <label>Stablecoin</label>
       <select id="szmSendCoin">
         <option value="USDT">USDT (Tether)</option>
@@ -1122,6 +1123,12 @@ body {
       </select>
       <label>Note (optional)</label>
       <input type="text" id="szmSendNote" placeholder="What's this for?">
+      <!-- Fee breakdown -->
+      <div class="szpay-fee-box" id="szmFeeBox" style="display:none;margin-bottom:10px;">
+        <div class="sfb-row"><span class="sfb-label">Amount</span><span id="szmFeeAmt">$0.00</span></div>
+        <div class="sfb-row"><span class="sfb-label sfb-fee">SubZero Fee (2.9% + $0.30)</span><span class="sfb-fee" id="szmFeeFee">$0.00</span></div>
+        <div class="sfb-row total"><span class="sfb-label">Total Charged</span><span id="szmFeeTotal">$0.00</span></div>
+      </div>
       <button class="szmail-send-btn" onclick="sendCoinToEmail()">🚀 Generate Transfer QR</button>
       <div id="szmSendResult" style="display:none;text-align:center;margin-top:12px;">
         <img id="szmSendQRImg" src="" alt="Transfer QR" style="width:180px;height:180px;border-radius:10px;border:2px solid var(--accent);">
@@ -1902,6 +1909,17 @@ function copyEmailAddr() {
   alert('📋 Copied: ' + szmailData.email);
 }
 
+function updateSZMailFee() {
+  const amt = parseFloat(document.getElementById('szmSendAmount').value || '0');
+  const box = document.getElementById('szmFeeBox');
+  if (amt <= 0) { box.style.display = 'none'; return; }
+  const f = calcSZPFee(amt);
+  box.style.display = '';
+  document.getElementById('szmFeeAmt').textContent = '$' + f.amount.toFixed(2);
+  document.getElementById('szmFeeFee').textContent = '$' + f.fee.toFixed(2);
+  document.getElementById('szmFeeTotal').textContent = '$' + f.total.toFixed(2);
+}
+
 // Send stablecoins to an email via QR
 function sendCoinToEmail() {
   const to = document.getElementById('szmSendTo').value.trim();
@@ -1931,6 +1949,9 @@ function sendCoinToEmail() {
 
   document.getElementById('szmSendQRImg').src = qrUrl;
   document.getElementById('szmSendResult').style.display = '';
+
+  // Record fee income to dashboard
+  recordFeeToServer('SubZero Mail', Math.round(f.amount * 100), coin + ' transfer to ' + to);
 
   // Log transaction
   szmailTxHistory.unshift({
