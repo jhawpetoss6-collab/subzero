@@ -1,15 +1,19 @@
 {
   "name": "SubZero — Flawless Victory",
   "short_name": "SubZero",
-  "description": "AI assistant powered by Spine Rip. Chat, code, trade — all from your phone.",
-  "start_url": "/",
+  "description": "SubZero is a private AI assistant that runs 100% locally on your machine. Chat with Spine Rip AI, run commands, search the web, manage crypto wallets, and control your PC — all from your phone. No cloud. No API keys. No subscriptions.",
+  "start_url": "/subzero/",
+  "scope": "/subzero/",
+  "id": "com.subzero.flawlessvictory",
   "display": "standalone",
   "background_color": "#0a0a12",
   "theme_color": "#0a0a12",
   "orientation": "portrait",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+    { "src": "/subzero/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/subzero/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ],
-  "categories": ["productivity", "utilities"]
+  "categories": ["productivity", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr"
 }
