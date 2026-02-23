@@ -2,24 +2,50 @@
 
 **Autonomous AI Runtime & App Suite for Windows**
 
+---
+
+## 📱 Just Scanned the QR Code? Start Here!
+
+**3 steps to get Sub-Zero on your desktop:**
+
+**Step 1** — Click the green **"Code"** button above, then click **"Download ZIP"**
+
+**Step 2** — Unzip the folder to your Desktop (right-click → Extract All → Desktop)
+
+**Step 3** — Open the folder and double-click **`setup.bat`**
+
+That's it! Setup installs everything and puts a **Sub-Zero Flawless Victory** icon on your desktop.
+
+> **Need Python first?** Download it free: [python.org/downloads](https://python.org/downloads) — check "Add to PATH" during install.
+>
+> **Want it on a USB stick?** After downloading, just drag the whole `subzero` folder to your USB drive. Run `Launch Sub-Zero.bat` from the USB on any Windows PC with Python.
+
+---
+
+## What Is This?
+
 Sub-Zero is an autonomous AI desktop environment with 10+ specialized agents, a sidebar launcher with built-in chat, tool execution, web browsing, file management, and paper trading — all running 100% locally through Ollama.
 
 ---
 
-## Quick Start
+## Full Install (for developers)
 
 ### Prerequisites
 - **Windows 10/11**
 - **Python 3.12+** — [python.org/downloads](https://python.org/downloads)
 - **Ollama** — [ollama.ai](https://ollama.ai)
 
-### Install
+### Option A: One-Click
+Download ZIP → Extract → Run `setup.bat`
+
+### Option B: Git Clone
 ```bash
 git clone https://github.com/jhawp/subzero.git
 cd subzero
 setup.bat
 ```
-Or manually:
+
+### Option C: Manual
 ```bash
 pip install -r requirements.txt
 ollama pull qwen2.5:3b
