@@ -1,0 +1,61 @@
+═══════════════════════════════════════════════════
+ GOOGLE PLAY STORE LISTING — SubZero
+═══════════════════════════════════════════════════
+
+APP NAME (max 30 chars):
+SubZero — Flawless Victory
+
+SHORT DESCRIPTION (max 80 chars):
+AI chat, crypto wallet & multi-payment hub — all in one sleek mobile app.
+
+FULL DESCRIPTION (max 4000 chars):
+SubZero is an all-in-one AI assistant and payment companion built for speed, privacy, and power.
+
+🤖 SPINE RIP AI — Your Personal AI Assistant
+Chat with Spine Rip, a smart AI that helps you draft messages, answer questions, write code, and manage your digital life — right from your phone.
+
+💳 TAP-TO-PAY & QR PAYMENTS
+Send and receive money instantly through multiple payment options:
+• Cash App
+• Venmo
+• Google Pay
+• Crypto (SOL, ETH, USDC)
+• Scan QR codes to pay or get paid
+
+🪙 BUILT-IN CRYPTO WALLET
+Connect your Phantom, MetaMask, or other wallets. Check balances, send tokens, and manage your portfolio without leaving the app.
+
+📊 INCOME DASHBOARD
+Track your earnings with a real-time dashboard showing fee income, transaction history, and weekly charts.
+
+🔒 PRIVACY FIRST
+Your data stays on your device. Chat history is stored locally. SubZero never collects, sells, or shares your personal information.
+
+⚡ KEY FEATURES:
+• Beautiful dark-mode UI inspired by modern messaging apps
+• NFC tap-to-pay between devices
+• Camera QR scanner for instant payments
+• Multiple payment service integrations
+• Crypto wallet management
+• AI-powered assistant for everyday tasks
+• Works offline as a Progressive Web App
+• Lightweight — under 3 MB
+
+Built for people who want one app that does it all. SubZero — Flawless Victory.
+
+──────────────────────────────
+CATEGORY: Communication / Finance
+CONTENT RATING: Everyone
+DEFAULT LANGUAGE: English (US)
+WEBSITE: https://jhawpetoss6-collab.github.io/subzero/
+PRIVACY POLICY: https://jhawpetoss6-collab.github.io/subzero/privacy.html
+EMAIL: subzero.app.support@gmail.com
+
+──────────────────────────────
+ASSETS CHECKLIST:
+[x] App icon — 512×512 (icon-512.png)
+[x] Feature graphic — 1024×500 (store/feature-graphic-1024x500.png)
+[x] Phone screenshots — 6× 1080×1920 (store/screens/processed/s1-s6)
+[x] Android App Bundle — twa/app-release-bundle.aab (2.3 MB)
+[x] Privacy policy page — docs/privacy.html (live)
+[x] Signed keystore — twa/subzero.keystore
