@@ -386,8 +386,12 @@ body {
   padding:4px 10px;border:1px solid var(--border);border-radius:12px;
   background:var(--bg3);color:var(--fg-dim);font-size:11px;cursor:pointer;
 }
-.pay-net-btn.active { background:var(--blue);color:#fff;border-color:var(--blue); }
-/* ── GOOGLE PAY ──────────────────────────── */
+ .pay-net-btn.active { background:var(--blue);color:#fff;border-color:var(--blue); }
+ /* ── QR METHOD TOGGLES ──────────────────── */
+ .pay-qr-methods { display:flex;gap:8px;justify-content:center;margin:8px 0; }
+ .pay-qr-btn { padding:6px 12px;border:1px solid var(--border);border-radius:12px;background:var(--bg3);color:var(--fg);font-size:12px;cursor:pointer; }
+ .pay-qr-btn.active { background:var(--accent);color:#000;border-color:var(--accent); }
+ /* ── GOOGLE PAY ──────────────────────────── */
 .gpay-section {
   margin:16px 0;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;
 }
@@ -801,8 +805,13 @@ body {
       <button class="pay-svc-btn netspend" onclick="netspendCheckout()">🏦 Netspend</button>
     </div>
     <div style="display:flex;gap:8px;margin:8px 0;">
-      <button class="wallet-connect-btn" style="flex:1" onclick="showPayQR('receive')">📥 Receive</button>
+      <button class="wallet-connect-btn" style="flex:1" onclick="showPayQR('receive')">📥 Receive (QR)</button>
       <button class="wallet-connect-btn" style="flex:1" onclick="showPayQR('send')">📤 Send</button>
+    </div>
+    <div class="pay-qr-methods" id="payQRMethods">
+      <button class="pay-qr-btn active" onclick="selectQRMethod('crypto', event)">Crypto</button>
+      <button class="pay-qr-btn" onclick="selectQRMethod('cashapp', event)">Cash App</button>
+      <button class="pay-qr-btn" onclick="selectQRMethod('venmo', event)">Venmo</button>
     </div>
     <div class="pay-qr-section" id="payQRSection" style="display:none">
       <div class="pqs-label" id="payQRLabel">Scan to pay</div>
@@ -1340,9 +1349,10 @@ function refreshWallet() {
 //  TAP TO PAY
 // ══════════════════════════════════════════════
 let payCoin = 'USDT';
-let payNetwork = 'ETH';
-let payTxHistory = JSON.parse(localStorage.getItem('sz_pay_tx') || '[]');
-const payAddresses = JSON.parse(localStorage.getItem('sz_pay_addr') || '{}');
+ let payNetwork = 'ETH';
+ let payTxHistory = JSON.parse(localStorage.getItem('sz_pay_tx') || '[]');
+ const payAddresses = JSON.parse(localStorage.getItem('sz_pay_addr') || '{}');
+ let qrMethod = 'crypto';
 
 function selectPayCoin(coin) {
   payCoin = coin;
@@ -1364,9 +1374,22 @@ let feeConfig = { fee_percent: 2.9, fee_flat_cents: 30, fee_label: 'SubZero Proc
 function updatePayQR() {
   const amt = document.getElementById('payAmount').value || '0';
   document.getElementById('payUsd').textContent = parseFloat(amt || 0).toFixed(2);
+  // live-refresh QR if visible
+  if (document.getElementById('payQRSection').style.display !== 'none') {
+    showPayQR('receive');
+  }
 }
 
-function calcFee(amountUsd) {
+function selectQRMethod(method, ev) {
+  qrMethod = method;
+  document.querySelectorAll('#payQRMethods .pay-qr-btn').forEach(b=>b.classList.remove('active'));
+  if (ev && ev.target) ev.target.classList.add('active');
+  if (document.getElementById('payQRSection').style.display !== 'none') {
+    showPayQR('receive');
+  }
+}
+
+function getPayAddr() {
   const cents = Math.round(amountUsd * 100);
   const feeCents = Math.round(cents * feeConfig.fee_percent / 100) + feeConfig.fee_flat_cents;
   return { amount: amountUsd, fee: feeCents / 100, total: (cents + feeCents) / 100, feeCents, amountCents: cents };
@@ -1418,15 +1441,32 @@ function getPayAddr() {
   return 'No address configured — enter in Wallet settings';
 }
 
+function buildPayLink(method, amt) {
+  const a = parseFloat(amt || '0');
+  if (method === 'cashapp') {
+    if (!feeConfig.owner_cashapp) { alert('Set your $Cashtag in settings (payments.json) first.'); return ''; }
+    const tag = feeConfig.owner_cashapp.startsWith('$') ? feeConfig.owner_cashapp.slice(1) : feeConfig.owner_cashapp;
+    return 'https://cash.app/' + tag + '/' + a.toFixed(2);
+  }
+  if (method === 'venmo') {
+    if (!feeConfig.owner_venmo) { alert('Set your Venmo @username in settings (payments.json) first.'); return ''; }
+    const user = feeConfig.owner_venmo.startsWith('@') ? feeConfig.owner_venmo.slice(1) : feeConfig.owner_venmo;
+    return 'https://venmo.com/' + user + '?txn=pay&amount=' + a.toFixed(2) + '&note=' + encodeURIComponent('SubZero Payment');
+  }
+  // crypto default
+  const addr = getPayAddr();
+  return addr + '?amount=' + a.toFixed(2) + '&coin=' + payCoin + '&net=' + payNetwork;
+}
+
 function showPayQR(mode) {
   const section = document.getElementById('payQRSection');
   const amt = document.getElementById('payAmount').value || '0';
-  const addr = getPayAddr();
   section.style.display = 'block';
-  document.getElementById('payAddr').textContent = addr;
   if (mode === 'receive') {
-    document.getElementById('payQRLabel').textContent = 'Show this QR to receive ' + payCoin;
-    const data = encodeURIComponent(addr + '?amount=' + amt + '&coin=' + payCoin + '&net=' + payNetwork);
+    const link = buildPayLink(qrMethod, amt);
+    document.getElementById('payQRLabel').textContent = 'Scan to pay (' + (qrMethod === 'crypto' ? payCoin + ' • ' + payNetwork : qrMethod) + ')';
+    document.getElementById('payAddr').textContent = link || '—';
+    const data = encodeURIComponent(link);
     document.getElementById('payQRImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + data + '&bgcolor=0a0a12&color=03dac6';
   } else {
     document.getElementById('payQRLabel').textContent = 'Scan recipient QR to send ' + amt + ' ' + payCoin;
