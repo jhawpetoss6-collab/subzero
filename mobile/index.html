@@ -309,6 +309,84 @@ body {
 }
 .api-key-input:focus { border-color:var(--accent); }
 .api-key-input::placeholder { color:var(--fg-dim); }
+/* ── TAP TO PAY ──────────────────────────── */
+.pay-body { flex:1;overflow-y:auto;padding:16px; }
+.pay-hero {
+  text-align:center;padding:24px 0 16px;
+}
+.pay-hero .pay-icon { font-size:64px;margin-bottom:8px; }
+.pay-hero .pay-title { font-size:18px;font-weight:700;color:var(--accent); }
+.pay-hero .pay-sub { font-size:13px;color:var(--fg-dim);margin-top:4px; }
+.pay-amount-box {
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:20px;text-align:center;margin:16px 0;
+}
+.pay-amount-box input {
+  background:transparent;border:none;color:var(--accent);font-size:36px;
+  font-weight:700;text-align:center;width:100%;outline:none;
+  font-family:inherit;
+}
+.pay-amount-box input::placeholder { color:var(--fg-dim); }
+.pay-amount-box .pay-usd { font-size:14px;color:var(--fg-dim);margin-top:4px; }
+.pay-coin-select {
+  display:flex;gap:8px;justify-content:center;margin:12px 0 20px;
+}
+.pay-coin-btn {
+  padding:8px 16px;border:1px solid var(--border);border-radius:20px;
+  background:var(--bg3);color:var(--fg);font-size:13px;font-weight:600;
+  cursor:pointer;transition:.15s;
+}
+.pay-coin-btn.active { background:var(--accent);color:#000;border-color:var(--accent); }
+.pay-coin-btn:active { opacity:.8; }
+.pay-tap-btn {
+  width:160px;height:160px;border-radius:50%;margin:16px auto;
+  background:linear-gradient(135deg, rgba(3,218,198,.15), rgba(0,136,255,.15));
+  border:3px solid var(--accent);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.pay-tap-btn:active { transform:scale(.95);background:rgba(3,218,198,.25); }
+.pay-tap-btn .tap-icon { font-size:48px; }
+.pay-tap-btn .tap-label { font-size:14px;font-weight:700;color:var(--accent);margin-top:4px; }
+.pay-tap-btn .tap-ripple {
+  position:absolute;inset:0;border-radius:50%;border:2px solid var(--accent);
+  animation:tapPulse 2s infinite;
+}
+@keyframes tapPulse { 0%{transform:scale(.8);opacity:.6} 100%{transform:scale(1.2);opacity:0} }
+.pay-or { text-align:center;color:var(--fg-dim);font-size:13px;margin:12px 0; }
+.pay-qr-section {
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:16px;text-align:center;margin:12px 0;
+}
+.pay-qr-section img { width:160px;height:160px;border-radius:8px;margin:8px 0; }
+.pay-qr-section .pqs-label { font-size:13px;color:var(--fg-dim); }
+.pay-addr {
+  background:var(--bg-input);border:1px solid var(--border);border-radius:8px;
+  padding:10px;font-family:monospace;font-size:11px;color:var(--fg-dim);
+  word-break:break-all;margin:8px 0;cursor:pointer;text-align:center;
+}
+.pay-addr:active { background:var(--bg4); }
+.pay-history { margin-top:20px; }
+.pay-history .ph-title { font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px; }
+.pay-tx {
+  display:flex;align-items:center;gap:10px;padding:10px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;
+}
+.pay-tx .ptx-icon { font-size:20px; }
+.pay-tx .ptx-info { flex:1; }
+.pay-tx .ptx-type { font-size:13px;font-weight:600; }
+.pay-tx .ptx-time { font-size:11px;color:var(--fg-dim); }
+.pay-tx .ptx-amount { font-size:14px;font-weight:600; }
+.pay-tx .ptx-amount.sent { color:var(--red); }
+.pay-tx .ptx-amount.received { color:var(--green); }
+.pay-network-bar {
+  display:flex;gap:6px;justify-content:center;margin:8px 0;
+}
+.pay-net-btn {
+  padding:4px 10px;border:1px solid var(--border);border-radius:12px;
+  background:var(--bg3);color:var(--fg-dim);font-size:11px;cursor:pointer;
+}
+.pay-net-btn.active { background:var(--blue);color:#fff;border-color:var(--blue); }
 /* ── QR / SHARE SCREEN ───────────────────── */
 .share-body { flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;align-items:center; }
 .share-body .logo-big { width:80px;height:80px;border-radius:50%;margin-bottom:16px; }
@@ -500,6 +578,9 @@ body {
       <button onclick="walletAction('swap')"><span class="wa-icon">⇄</span>Swap</button>
       <button onclick="walletAction('buy')"><span class="wa-icon">+</span>Buy</button>
     </div>
+    <button class="wallet-connect-btn" style="margin-bottom:16px;background:var(--accent);color:#000;border-color:var(--accent);font-size:16px;padding:14px;border-radius:14px;" onclick="showScreen('pay')">
+      📲 Tap to Pay — Stablecoins
+    </button>
     <div class="wallet-section">
       <div class="ws-title">Assets</div>
       <div id="walletAssets">
@@ -518,6 +599,59 @@ body {
       <input class="api-key-input" id="cryptoApiKey" placeholder="Exchange API Key (Binance, Coinbase...)" style="margin-top:12px">
       <input class="api-key-input" id="cryptoApiSecret" placeholder="API Secret" style="margin-top:6px">
       <button class="wallet-connect-btn" style="margin-top:8px" onclick="saveCryptoKeys()">Save API Keys</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAP TO PAY SCREEN ═══════ -->
+<div class="screen" id="screen-pay">
+  <div class="header">
+    <button class="back" onclick="showScreen('wallet')">←</button>
+    <div class="info"><div class="name">Tap to Pay</div><div class="status">Stablecoins • NFC + QR</div></div>
+  </div>
+  <div class="pay-body">
+    <div class="pay-hero">
+      <div class="pay-icon">📱</div>
+      <div class="pay-title">Pay with Stablecoins</div>
+      <div class="pay-sub">Tap phones to pay instantly — or scan QR code</div>
+    </div>
+    <div class="pay-coin-select" id="payCoinSelect">
+      <button class="pay-coin-btn active" onclick="selectPayCoin('USDT')">USDT</button>
+      <button class="pay-coin-btn" onclick="selectPayCoin('USDC')">USDC</button>
+      <button class="pay-coin-btn" onclick="selectPayCoin('DAI')">DAI</button>
+      <button class="pay-coin-btn" onclick="selectPayCoin('BUSD')">BUSD</button>
+    </div>
+    <div class="pay-network-bar" id="payNetworks">
+      <button class="pay-net-btn active" onclick="selectPayNet('ETH')">Ethereum</button>
+      <button class="pay-net-btn" onclick="selectPayNet('BSC')">BSC</button>
+      <button class="pay-net-btn" onclick="selectPayNet('POLYGON')">Polygon</button>
+      <button class="pay-net-btn" onclick="selectPayNet('SOL')">Solana</button>
+      <button class="pay-net-btn" onclick="selectPayNet('TRON')">Tron</button>
+    </div>
+    <div class="pay-amount-box">
+      <input type="number" id="payAmount" placeholder="0.00" oninput="updatePayQR()">
+      <div class="pay-usd"><span id="payCoinLabel">USDT</span> • ≈ $<span id="payUsd">0.00</span></div>
+    </div>
+    <div class="pay-tap-btn" id="tapPayBtn" onclick="tapToPay()">
+      <div class="tap-ripple"></div>
+      <div class="tap-icon">📲</div>
+      <div class="tap-label">TAP TO PAY</div>
+    </div>
+    <div class="pay-or">— or —</div>
+    <div style="display:flex;gap:8px;margin:8px 0;">
+      <button class="wallet-connect-btn" style="flex:1" onclick="showPayQR('receive')">📥 Receive</button>
+      <button class="wallet-connect-btn" style="flex:1" onclick="showPayQR('send')">📤 Send</button>
+    </div>
+    <div class="pay-qr-section" id="payQRSection" style="display:none">
+      <div class="pqs-label" id="payQRLabel">Scan to pay</div>
+      <img id="payQRImg" src="" alt="Payment QR">
+      <div class="pay-addr" id="payAddr" onclick="copyPayAddr()">Tap to copy address</div>
+    </div>
+    <div class="pay-history">
+      <div class="ph-title">Recent Transactions</div>
+      <div id="payTxList">
+        <div style="text-align:center;color:var(--fg-dim);font-size:13px;padding:20px;">No transactions yet.<br>Tap to pay or receive stablecoins to get started.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -998,12 +1132,173 @@ function saveCryptoKeys() {
   }
 }
 function refreshWallet() {
-  // Ask Spine Rip for prices
   showScreen('chat');
   const input = document.getElementById('msgInput');
   input.value = 'Get me the current prices for Bitcoin, Ethereum, and Solana';
   input.focus();
   updateSend();
+}
+
+// ══════════════════════════════════════════════
+//  TAP TO PAY
+// ══════════════════════════════════════════════
+let payCoin = 'USDT';
+let payNetwork = 'ETH';
+let payTxHistory = JSON.parse(localStorage.getItem('sz_pay_tx') || '[]');
+const payAddresses = JSON.parse(localStorage.getItem('sz_pay_addr') || '{}');
+
+function selectPayCoin(coin) {
+  payCoin = coin;
+  document.querySelectorAll('#payCoinSelect .pay-coin-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('payCoinLabel').textContent = coin;
+  updatePayQR();
+}
+
+function selectPayNet(net) {
+  payNetwork = net;
+  document.querySelectorAll('#payNetworks .pay-net-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  updatePayQR();
+}
+
+function updatePayQR() {
+  const amt = document.getElementById('payAmount').value || '0';
+  document.getElementById('payUsd').textContent = parseFloat(amt || 0).toFixed(2);
+}
+
+function getPayAddr() {
+  const key = payNetwork + '_' + payCoin;
+  if (payAddresses[key]) return payAddresses[key];
+  const saved = localStorage.getItem('sz_wallet_addr_' + payNetwork);
+  if (saved) return saved;
+  return 'No address configured — enter in Wallet settings';
+}
+
+function showPayQR(mode) {
+  const section = document.getElementById('payQRSection');
+  const amt = document.getElementById('payAmount').value || '0';
+  const addr = getPayAddr();
+  section.style.display = 'block';
+  document.getElementById('payAddr').textContent = addr;
+  if (mode === 'receive') {
+    document.getElementById('payQRLabel').textContent = 'Show this QR to receive ' + payCoin;
+    const data = encodeURIComponent(addr + '?amount=' + amt + '&coin=' + payCoin + '&net=' + payNetwork);
+    document.getElementById('payQRImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + data + '&bgcolor=0a0a12&color=03dac6';
+  } else {
+    document.getElementById('payQRLabel').textContent = 'Scan recipient QR to send ' + amt + ' ' + payCoin;
+    document.getElementById('payQRImg').src = '';
+    startQRScanner();
+  }
+}
+
+function copyPayAddr() {
+  const addr = document.getElementById('payAddr').textContent;
+  navigator.clipboard?.writeText(addr);
+  document.getElementById('payAddr').textContent = '✅ Copied!';
+  setTimeout(() => { document.getElementById('payAddr').textContent = addr; }, 1500);
+}
+
+async function tapToPay() {
+  const amt = document.getElementById('payAmount').value;
+  if (!amt || parseFloat(amt) <= 0) {
+    alert('Enter an amount first');
+    return;
+  }
+
+  // Try NFC first (Android Chrome)
+  if ('NDEFReader' in window) {
+    try {
+      const ndef = new NDEFReader();
+      const payData = JSON.stringify({
+        app: 'SubZero', coin: payCoin, network: payNetwork,
+        amount: amt, addr: getPayAddr(), ts: Date.now()
+      });
+
+      // Check if we should write (send) or read (receive)
+      document.getElementById('tapPayBtn').querySelector('.tap-label').textContent = 'HOLD NEAR...';
+      document.getElementById('tapPayBtn').style.borderColor = '#ffab00';
+
+      await ndef.scan();
+      ndef.onreading = (event) => {
+        // Received a tap — parse payment
+        for (const record of event.message.records) {
+          if (record.recordType === 'text') {
+            const decoder = new TextDecoder();
+            const data = JSON.parse(decoder.decode(record.data));
+            if (data.app === 'SubZero') {
+              addPayTx('received', data.amount, data.coin, data.network, 'NFC Tap');
+              alert('✅ Received ' + data.amount + ' ' + data.coin + ' via NFC!');
+            }
+          }
+        }
+        resetTapBtn();
+      };
+
+      // Also write our payment request
+      await ndef.write({ records: [{ recordType: 'text', data: payData }] });
+      addPayTx('sent', amt, payCoin, payNetwork, 'NFC Tap');
+      alert('✅ Payment of ' + amt + ' ' + payCoin + ' sent via NFC!');
+      resetTapBtn();
+    } catch (e) {
+      if (e.name === 'NotAllowedError') {
+        alert('NFC permission denied. Go to Settings > Site permissions > NFC');
+      } else {
+        // NFC not available — fall back to QR
+        showPayQR('receive');
+      }
+      resetTapBtn();
+    }
+  } else {
+    // No NFC — show QR instead
+    showPayQR('receive');
+    navigator.vibrate?.([100, 50, 100]);
+  }
+}
+
+function resetTapBtn() {
+  document.getElementById('tapPayBtn').querySelector('.tap-label').textContent = 'TAP TO PAY';
+  document.getElementById('tapPayBtn').style.borderColor = 'var(--accent)';
+}
+
+function addPayTx(type, amount, coin, network, method) {
+  const tx = {
+    type, amount, coin, network, method,
+    time: new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),
+    date: new Date().toLocaleDateString(),
+  };
+  payTxHistory.unshift(tx);
+  if (payTxHistory.length > 50) payTxHistory = payTxHistory.slice(0, 50);
+  localStorage.setItem('sz_pay_tx', JSON.stringify(payTxHistory));
+  renderPayTx();
+}
+
+function renderPayTx() {
+  const el = document.getElementById('payTxList');
+  if (!payTxHistory.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--fg-dim);font-size:13px;padding:20px;">No transactions yet.</div>';
+    return;
+  }
+  el.innerHTML = payTxHistory.slice(0, 10).map(tx => `
+    <div class="pay-tx">
+      <span class="ptx-icon">${tx.type === 'sent' ? '↗️' : '↙️'}</span>
+      <div class="ptx-info">
+        <div class="ptx-type">${tx.type === 'sent' ? 'Sent' : 'Received'} via ${tx.method}</div>
+        <div class="ptx-time">${tx.date} ${tx.time} • ${tx.network}</div>
+      </div>
+      <div class="ptx-amount ${tx.type}">${tx.type === 'sent' ? '-' : '+'}${tx.amount} ${tx.coin}</div>
+    </div>
+  `).join('');
+}
+renderPayTx();
+
+function startQRScanner() {
+  // Use camera to scan QR on supported devices
+  if ('BarcodeDetector' in window) {
+    alert('Point your camera at the payment QR code');
+  } else {
+    alert('Enter the recipient address manually or ask Spine Rip to help');
+  }
 }
 
 // ══════════════════════════════════════════════
