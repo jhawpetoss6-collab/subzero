@@ -507,6 +507,72 @@ body {
 .share-btn.outline {
   background:transparent;border:1px solid var(--accent);color:var(--accent);
 }
+/* ── SUBZERO PAY P2P ────────────────────── */
+.szpay-body { flex:1;overflow-y:auto;padding:16px; }
+.szpay-hero { text-align:center;padding:20px 0 10px; }
+.szpay-hero .szp-icon { font-size:48px;margin-bottom:8px; }
+.szpay-hero .szp-title { font-size:22px;font-weight:800;color:var(--accent);letter-spacing:1px; }
+.szpay-hero .szp-sub { font-size:13px;color:var(--fg-dim);margin-top:4px; }
+.szpay-modes { display:flex;gap:10px;margin:16px 0; }
+.szpay-mode-btn {
+  flex:1;padding:18px 10px;border:2px solid var(--border);border-radius:16px;
+  background:var(--bg3);color:var(--fg);text-align:center;cursor:pointer;transition:all .2s;
+}
+.szpay-mode-btn.active { border-color:var(--accent);background:rgba(3,218,198,.1); }
+.szpay-mode-btn .smb-icon { font-size:32px;display:block;margin-bottom:6px; }
+.szpay-mode-btn .smb-label { font-size:14px;font-weight:700; }
+.szpay-mode-btn .smb-desc { font-size:11px;color:var(--fg-dim);margin-top:2px; }
+.szpay-form { background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:14px; }
+.szpay-form label { font-size:12px;color:var(--fg-dim);display:block;margin-bottom:4px;font-weight:600; }
+.szpay-form input, .szpay-form textarea {
+  width:100%;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;font-size:15px;outline:none;margin-bottom:10px;
+}
+.szpay-form input:focus, .szpay-form textarea:focus { border-color:var(--accent); }
+.szpay-form textarea { resize:none;height:44px;font-size:13px; }
+.szpay-route-btns { display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap; }
+.szpay-route-btn {
+  padding:8px 14px;border:1px solid var(--border);border-radius:20px;
+  background:var(--bg3);color:var(--fg);font-size:12px;cursor:pointer;font-weight:600;
+}
+.szpay-route-btn.active { background:var(--accent);color:#000;border-color:var(--accent); }
+.szpay-fee-box {
+  background:var(--bg4);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;
+}
+.szpay-fee-box .sfb-row { display:flex;justify-content:space-between;margin-bottom:4px; }
+.szpay-fee-box .sfb-row.total { border-top:1px solid var(--border);padding-top:6px;margin-top:4px;font-weight:700;color:var(--accent); }
+.szpay-fee-box .sfb-label { color:var(--fg-dim); }
+.szpay-fee-box .sfb-fee { color:var(--orange); }
+.szpay-generate-btn {
+  width:100%;padding:16px;border:none;border-radius:14px;
+  background:var(--accent);color:#000;font-size:16px;font-weight:800;cursor:pointer;
+  letter-spacing:.5px;
+}
+.szpay-generate-btn:active { background:#04f0d8; }
+.szpay-qr-result {
+  text-align:center;padding:20px 0;
+}
+.szpay-qr-result img { width:220px;height:220px;border-radius:12px;border:3px solid var(--accent); }
+.szpay-qr-result .sqr-amount { font-size:28px;font-weight:800;color:var(--accent);margin:12px 0 4px; }
+.szpay-qr-result .sqr-fee { font-size:12px;color:var(--orange); }
+.szpay-qr-result .sqr-note { font-size:13px;color:var(--fg-dim);margin-top:4px; }
+.szpay-qr-result .sqr-route { font-size:13px;color:var(--fg);margin-top:6px;font-weight:600; }
+.szpay-scan-btn {
+  width:100%;padding:16px;border:2px solid var(--accent);border-radius:14px;
+  background:transparent;color:var(--accent);font-size:16px;font-weight:800;cursor:pointer;
+  margin-top:10px;
+}
+.szpay-scan-btn:active { background:rgba(3,218,198,.1); }
+.szpay-history { margin-top:16px; }
+.szpay-history .sph-title { font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px; }
+.szpay-tx { display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border); }
+.szpay-tx .spt-icon { font-size:24px; }
+.szpay-tx .spt-info { flex:1; }
+.szpay-tx .spt-method { font-size:13px;font-weight:600; }
+.szpay-tx .spt-time { font-size:11px;color:var(--fg-dim); }
+.szpay-tx .spt-amount { font-size:14px;font-weight:700; }
+.szpay-tx .spt-amount.sent { color:var(--red); }
+.szpay-tx .spt-amount.received { color:var(--green); }
 /* ── INSTRUCTIONS SCREEN ─────────────────── */
 .instructions-body { flex:1;overflow-y:auto;padding:20px; }
 .inst-step {
@@ -580,6 +646,7 @@ body {
   </div>
   <div class="drawer-items">
     <div class="drawer-item" onclick="showScreen('chat');closeDrawer()"><span class="di-icon">💬</span>Spine Rip Chat</div>
+    <div class="drawer-item" onclick="showScreen('szpay');closeDrawer()"><span class="di-icon">💸</span>SubZero Pay</div>
     <div class="drawer-item" onclick="showScreen('wallet');closeDrawer()"><span class="di-icon">💰</span>Crypto Wallet</div>
     <div class="drawer-item" onclick="showScreen('share');closeDrawer()"><span class="di-icon">📥</span>Download Desktop</div>
     <div class="drawer-item" onclick="showScreen('instructions');closeDrawer()"><span class="di-icon">📖</span>Instructions</div>
@@ -632,8 +699,105 @@ body {
         <div class="cc-preview">View balances & connect wallets</div>
       </div>
     </div>
+    <div class="chat-card" onclick="showScreen('szpay')">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#03dac6,#00b894);display:flex;align-items:center;justify-content:center;font-size:24px;">💸</div>
+      <div class="cc-info">
+        <div class="cc-top">
+          <span class="cc-name">SubZero Pay</span>
+          <span class="cc-time">P2P</span>
+        </div>
+        <div class="cc-preview">Send & receive payments via QR code</div>
+      </div>
+    </div>
   </div>
   <button class="fab" onclick="showScreen('chat')">✏️</button>
+</div>
+
+<!-- ═══════ SUBZERO PAY P2P SCREEN ═══════ -->
+<div class="screen" id="screen-szpay">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">SubZero Pay</div><div class="status">Peer-to-Peer • QR Payments</div></div>
+  </div>
+  <div class="szpay-body">
+    <div class="szpay-hero">
+      <div class="szp-icon">💸</div>
+      <div class="szp-title">SubZero Pay</div>
+      <div class="szp-sub">Two-way payments between SubZero users</div>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div class="szpay-modes">
+      <div class="szpay-mode-btn active" id="szpModeRequest" onclick="setSZPayMode('request')">
+        <span class="smb-icon">📲</span>
+        <span class="smb-label">Request</span>
+        <span class="smb-desc">Generate a payment QR</span>
+      </div>
+      <div class="szpay-mode-btn" id="szpModeScan" onclick="setSZPayMode('scan')">
+        <span class="smb-icon">📷</span>
+        <span class="smb-label">Scan & Pay</span>
+        <span class="smb-desc">Scan someone's QR to pay</span>
+      </div>
+    </div>
+
+    <!-- REQUEST MODE: Form -->
+    <div id="szpRequestPanel">
+      <div class="szpay-form">
+        <label>Amount ($)</label>
+        <input type="number" id="szpAmount" placeholder="0.00" step="0.01" min="0.01" oninput="updateSZPFee()">
+
+        <label>Payment Route</label>
+        <div class="szpay-route-btns">
+          <div class="szpay-route-btn active" onclick="setSZPRoute('cashapp',this)">💲 Cash App</div>
+          <div class="szpay-route-btn" onclick="setSZPRoute('venmo',this)">Ⓥ Venmo</div>
+          <div class="szpay-route-btn" onclick="setSZPRoute('crypto',this)">🪙 Crypto</div>
+          <div class="szpay-route-btn" onclick="setSZPRoute('googlepay',this)">🔷 Google Pay</div>
+        </div>
+
+        <label>Note (optional)</label>
+        <textarea id="szpNote" placeholder="What's this payment for?"></textarea>
+      </div>
+
+      <!-- Fee Breakdown -->
+      <div class="szpay-fee-box" id="szpFeeBox" style="display:none">
+        <div class="sfb-row"><span class="sfb-label">Amount</span><span id="szpFeeAmt">$0.00</span></div>
+        <div class="sfb-row"><span class="sfb-label sfb-fee">SubZero Fee (2.9% + $0.30)</span><span class="sfb-fee" id="szpFeeFee">$0.00</span></div>
+        <div class="sfb-row total"><span class="sfb-label">Total Payer Pays</span><span id="szpFeeTotal">$0.00</span></div>
+      </div>
+
+      <button class="szpay-generate-btn" onclick="generateSZPayQR()">Generate Payment QR Code</button>
+
+      <!-- Generated QR Result -->
+      <div class="szpay-qr-result" id="szpQRResult" style="display:none">
+        <div style="font-size:14px;font-weight:700;margin-bottom:8px;">Show this to the payer ↓</div>
+        <img id="szpQRImg" src="" alt="SubZero Pay QR">
+        <div class="sqr-amount" id="szpQRAmount"></div>
+        <div class="sqr-fee" id="szpQRFee"></div>
+        <div class="sqr-route" id="szpQRRoute"></div>
+        <div class="sqr-note" id="szpQRNote"></div>
+        <button class="szpay-scan-btn" style="margin-top:16px" onclick="shareSZPayQR()">📤 Share QR Code</button>
+      </div>
+    </div>
+
+    <!-- SCAN MODE: Scanner -->
+    <div id="szpScanPanel" style="display:none">
+      <div style="text-align:center;padding:20px 0;">
+        <div style="font-size:48px;margin-bottom:12px;">📷</div>
+        <div style="font-size:15px;font-weight:600;margin-bottom:8px;">Scan a SubZero Pay QR Code</div>
+        <div style="font-size:13px;color:var(--fg-dim);margin-bottom:20px;">Point your camera at another user's payment QR to send them money.</div>
+        <button class="szpay-generate-btn" onclick="startSZPayScan()">📸 Open Camera & Scan</button>
+        <div style="margin-top:16px;font-size:12px;color:var(--fg-dim);">A processing fee of <span style="color:var(--orange);font-weight:700;">2.9% + $0.30</span> is included in every transaction.</div>
+      </div>
+    </div>
+
+    <!-- P2P Transaction History -->
+    <div class="szpay-history">
+      <div class="sph-title">SubZero Pay History</div>
+      <div id="szpTxList">
+        <div style="text-align:center;color:var(--fg-dim);font-size:13px;padding:20px;">No SubZero Pay transactions yet.<br>Request or scan to get started!</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════ CHAT SCREEN ═══════ -->
@@ -1000,6 +1164,138 @@ body {
 </div>
 
 <script>
+// ══════════════════════════════════════════════
+//  SUBZERO PAY P2P
+// ══════════════════════════════════════════════
+let szpMode = 'request';
+let szpRoute = 'cashapp';
+let szpTxHistory = JSON.parse(localStorage.getItem('szp_tx') || '[]');
+
+function setSZPayMode(mode) {
+  szpMode = mode;
+  document.getElementById('szpModeRequest').classList.toggle('active', mode === 'request');
+  document.getElementById('szpModeScan').classList.toggle('active', mode === 'scan');
+  document.getElementById('szpRequestPanel').style.display = mode === 'request' ? '' : 'none';
+  document.getElementById('szpScanPanel').style.display = mode === 'scan' ? '' : 'none';
+}
+
+function setSZPRoute(route, el) {
+  szpRoute = route;
+  document.querySelectorAll('.szpay-route-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+function calcSZPFee(amount) {
+  const pct = 2.9, flat = 0.30;
+  const fee = Math.round((amount * pct / 100 + flat) * 100) / 100;
+  return { amount, fee, total: Math.round((amount + fee) * 100) / 100 };
+}
+
+function updateSZPFee() {
+  const amt = parseFloat(document.getElementById('szpAmount').value || '0');
+  const box = document.getElementById('szpFeeBox');
+  if (amt <= 0) { box.style.display = 'none'; return; }
+  const f = calcSZPFee(amt);
+  box.style.display = '';
+  document.getElementById('szpFeeAmt').textContent = '$' + f.amount.toFixed(2);
+  document.getElementById('szpFeeFee').textContent = '$' + f.fee.toFixed(2);
+  document.getElementById('szpFeeTotal').textContent = '$' + f.total.toFixed(2);
+}
+
+function generateSZPayQR() {
+  const amt = parseFloat(document.getElementById('szpAmount').value || '0');
+  if (amt <= 0) { alert('Enter an amount'); return; }
+  const f = calcSZPFee(amt);
+  const note = document.getElementById('szpNote').value.trim() || 'SubZero Payment';
+
+  // Build SubZero pay URI
+  const params = new URLSearchParams({
+    amount: f.total.toFixed(2),
+    base: f.amount.toFixed(2),
+    fee: f.fee.toFixed(2),
+    route: szpRoute,
+    note: note,
+    ts: Date.now().toString()
+  });
+
+  // Add payment handles from linked accounts
+  const cashTag = localStorage.getItem('sz_cashapp') || '';
+  const venmoUser = localStorage.getItem('sz_venmo') || '';
+  const cryptoAddr = localStorage.getItem('sz_wallet_addr_SOL') || localStorage.getItem('sz_wallet_addr_ETH') || '';
+  if (cashTag) params.set('cashapp', cashTag);
+  if (venmoUser) params.set('venmo', venmoUser);
+  if (cryptoAddr) params.set('addr', cryptoAddr);
+
+  const uri = 'subzero:pay?' + params.toString();
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(uri) + '&bgcolor=0a0a12&color=03dac6';
+
+  document.getElementById('szpQRImg').src = qrUrl;
+  document.getElementById('szpQRAmount').textContent = '$' + f.total.toFixed(2);
+  document.getElementById('szpQRFee').textContent = 'Includes $' + f.fee.toFixed(2) + ' SubZero fee';
+  const routeNames = { cashapp: '💲 Cash App', venmo: 'Ⓥ Venmo', crypto: '🪙 Crypto', googlepay: '🔷 Google Pay' };
+  document.getElementById('szpQRRoute').textContent = 'Pay via: ' + (routeNames[szpRoute] || szpRoute);
+  document.getElementById('szpQRNote').textContent = note;
+  document.getElementById('szpQRResult').style.display = '';
+
+  // Log as "requested"
+  addSZPTx('requested', f.amount, f.fee, szpRoute, note);
+}
+
+function shareSZPayQR() {
+  const img = document.getElementById('szpQRImg');
+  const amt = document.getElementById('szpQRAmount').textContent;
+  if (navigator.share) {
+    navigator.share({
+      title: 'SubZero Pay — ' + amt,
+      text: 'Pay me ' + amt + ' via SubZero Pay! Scan the QR code in the SubZero app.',
+      url: img.src
+    }).catch(() => {});
+  } else {
+    navigator.clipboard?.writeText(img.src);
+    alert('QR link copied!');
+  }
+}
+
+function startSZPayScan() {
+  // Reuse the existing QR scanner but handle SubZero pay URIs
+  startQRScanner();
+}
+
+function addSZPTx(type, amount, fee, route, note) {
+  const tx = {
+    type, amount, fee, route, note,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    date: new Date().toLocaleDateString()
+  };
+  szpTxHistory.unshift(tx);
+  if (szpTxHistory.length > 50) szpTxHistory = szpTxHistory.slice(0, 50);
+  localStorage.setItem('szp_tx', JSON.stringify(szpTxHistory));
+  renderSZPTx();
+}
+
+function renderSZPTx() {
+  const el = document.getElementById('szpTxList');
+  if (!szpTxHistory.length) {
+    el.innerHTML = '<div style="text-align:center;color:var(--fg-dim);font-size:13px;padding:20px;">No SubZero Pay transactions yet.</div>';
+    return;
+  }
+  const routeNames = { cashapp: '💲 Cash App', venmo: 'Ⓥ Venmo', crypto: '🪙 Crypto', googlepay: '🔷 Google Pay' };
+  el.innerHTML = szpTxHistory.slice(0, 15).map(tx => {
+    const icon = tx.type === 'requested' ? '📲' : tx.type === 'paid' ? '✅' : '↗️';
+    const cls = tx.type === 'paid' ? 'sent' : 'received';
+    const sign = tx.type === 'paid' ? '-' : '+';
+    return `<div class="szpay-tx">
+      <div class="spt-icon">${icon}</div>
+      <div class="spt-info">
+        <div class="spt-method">${tx.type === 'requested' ? 'Requested' : 'Paid'} via ${routeNames[tx.route] || tx.route}</div>
+        <div class="spt-time">${tx.date} ${tx.time} — ${tx.note || ''}</div>
+      </div>
+      <div class="spt-amount ${cls}">${sign}$${parseFloat(tx.amount).toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+renderSZPTx();
+
 // ══════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════
