@@ -747,8 +747,8 @@ def _tool_trade_watchlist(params: dict) -> ToolResult:
 
 # ── Deployment Tools ──────────────────────────────────────
 
-SUBZERO_REPO = "https://github.com/jhawp/subzero.git"
-SUBZERO_ZIP  = "https://github.com/jhawp/subzero/archive/refs/heads/main.zip"
+SUBZERO_REPO = "https://github.com/jhawpetoss6-collab/subzero.git"
+SUBZERO_ZIP  = "https://github.com/jhawpetoss6-collab/subzero/archive/refs/heads/main.zip"
 
 
 def _find_usb_drives() -> list[str]:

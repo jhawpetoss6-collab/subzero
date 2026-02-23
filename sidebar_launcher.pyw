@@ -25,7 +25,7 @@ except ImportError:
 
 LOGO_PATH = Path(__file__).parent / "logo.png"
 QR_PATH   = Path(__file__).parent / "qr_code.png"
-DOWNLOAD_URL = "https://github.com/jhawp/subzero"
+DOWNLOAD_URL = "https://github.com/jhawpetoss6-collab/subzero"
 
 # ── App registry (bottom → top order) ──────────────────────────
 # Each entry: (label, color_accent, launch_command)

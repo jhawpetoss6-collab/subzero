@@ -40,7 +40,7 @@ Download ZIP → Extract → Run `setup.bat`
 
 ### Option B: Git Clone
 ```bash
-git clone https://github.com/jhawp/subzero.git
+git clone https://github.com/jhawpetoss6-collab/subzero.git
 cd subzero
 setup.bat
 ```
