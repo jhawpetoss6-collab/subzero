@@ -4,3 +4,4 @@ selenium>=4.15
 duckduckgo-search>=4.0
 alpaca-py>=0.13
 requests>=2.31
+python-telegram-bot>=21.0

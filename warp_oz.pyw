@@ -24,6 +24,7 @@ from pathlib import Path
 from datetime import datetime
 from functools import partial
 from sz_runtime import ToolRuntime
+from sz_telegram import start_bot as _tg_start, stop_bot as _tg_stop, is_bot_running as _tg_running, load_config as _tg_config, save_config as _tg_save
 
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -721,6 +722,19 @@ class WarpOzWindow(QMainWindow):
         hl.addWidget(subtitle)
 
         hl.addStretch()
+
+        # Telegram bot button
+        self.telegram_btn = QPushButton("\u2708 Telegram")
+        self.telegram_btn.setStyleSheet(f"""
+            QPushButton {{
+                color: #29b6f6; background: {BG_BUTTON};
+                border: 1px solid #29b6f6; border-radius: 4px;
+                padding: 3px 10px; font-size: 9pt;
+            }}
+            QPushButton:hover {{ background: #0a1a2a; }}
+        """)
+        self.telegram_btn.clicked.connect(self._toggle_telegram_bot)
+        hl.addWidget(self.telegram_btn)
 
         # Code review button
         self.review_btn = QPushButton("\u2B21 Code Review")
@@ -1802,6 +1816,51 @@ class WarpOzWindow(QMainWindow):
         self.ai_busy = False
         self.stop_btn.setStyleSheet(f"color: {FG_DIM}; font-size: 8pt; border: none; padding: 2px 8px;")
         self._term_print("[AI] Stopped.\n", FG_WARNING)
+
+    # ── Telegram Bot ───────────────────────────────────────────
+
+    def _toggle_telegram_bot(self):
+        """Start or stop the Telegram bot from the GUI."""
+        if _tg_running():
+            ok, msg = _tg_stop()
+            self._term_print(f"[Telegram] {msg}\n", FG_WARNING if not ok else FG_AI)
+            self.telegram_btn.setStyleSheet(f"""
+                QPushButton {{
+                    color: #29b6f6; background: {BG_BUTTON};
+                    border: 1px solid #29b6f6; border-radius: 4px;
+                    padding: 3px 10px; font-size: 9pt;
+                }}
+                QPushButton:hover {{ background: #0a1a2a; }}
+            """)
+            self.telegram_btn.setText("\u2708 Telegram")
+        else:
+            cfg = _tg_config()
+            token = cfg.get("bot_token", "")
+            if not token:
+                token, accepted = QInputDialog.getText(
+                    self, "Telegram Bot Token",
+                    "Paste your Telegram bot token:\n"
+                    "(Get one from @BotFather on Telegram)",
+                )
+                if not accepted or not token.strip():
+                    self._term_print("[Telegram] Setup cancelled.\n", FG_DIM)
+                    return
+                token = token.strip()
+                cfg["bot_token"] = token
+                _tg_save(cfg)
+
+            ok, msg = _tg_start(token)
+            self._term_print(f"[Telegram] {msg}\n", FG_AI if ok else FG_ERROR)
+            if ok:
+                self.telegram_btn.setStyleSheet(f"""
+                    QPushButton {{
+                        color: #000; background: #29b6f6;
+                        border: 1px solid #29b6f6; border-radius: 4px;
+                        padding: 3px 10px; font-size: 9pt; font-weight: bold;
+                    }}
+                    QPushButton:hover {{ background: #4fc3f7; }}
+                """)
+                self.telegram_btn.setText("\u2708 Telegram ON")
 
     # ── Code Review ───────────────────────────────────────────────
 

@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0a0a12">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>SubZero</title>
+<style>
+:root {
+  --bg:       #0a0a12;
+  --bg2:      #08080f;
+  --bg3:      #0e0e1a;
+  --bg4:      #14142a;
+  --bg-input: #10101c;
+  --fg:       #c8c8d0;
+  --fg-dim:   #55556a;
+  --accent:   #03dac6;
+  --blue:     #0088ff;
+  --blue2:    #00aaff;
+  --purple:   #bb86fc;
+  --green:    #00e676;
+  --red:      #ef5350;
+  --orange:   #ffab00;
+  --border:   #1a1a2e;
+  --bubble-user: #0a2e4a;
+  --bubble-bot:  #0e0e1a;
+  --header:   #06060c;
+}
+.light {
+  --bg:       #f0f2f5;
+  --bg2:      #ffffff;
+  --bg3:      #e8eaed;
+  --bg4:      #d4d6da;
+  --bg-input: #ffffff;
+  --fg:       #1a1a2e;
+  --fg-dim:   #8a8a9a;
+  --accent:   #03a896;
+  --border:   #d0d2d6;
+  --bubble-user: #0a2e4a;
+  --bubble-bot:  #e8eaed;
+  --header:   #0a0a12;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  height: 100vh; width: 100vw;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+/* ── SCREENS ─────────────────────────────── */
+.screen { display:none; position:absolute; inset:0; flex-direction:column; }
+.screen.active { display:flex; }
+/* ── HEADER BAR (Telegram style) ─────────── */
+.header {
+  background: var(--header); height:56px; display:flex; align-items:center;
+  padding:0 8px; gap:8px; flex-shrink:0; z-index:10;
+  border-bottom: 1px solid var(--border);
+}
+.light .header { background: #0a0a12; color:#fff; }
+.header .back { width:40px;height:40px;border:none;background:none;color:#fff;font-size:22px;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center; }
+.header .back:active { background:rgba(255,255,255,.1); }
+.header .avatar { width:40px;height:40px;border-radius:50%;object-fit:cover; }
+.header .info { flex:1;margin-left:4px; }
+.header .info .name { color:#fff;font-size:16px;font-weight:600; }
+.header .info .status { font-size:12px;color:var(--accent); }
+.header .hbtn { width:40px;height:40px;border:none;background:none;color:#fff;font-size:20px;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center; }
+.header .hbtn:active { background:rgba(255,255,255,.1); }
+/* ── HAMBURGER / SIDE DRAWER ─────────────── */
+.overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50; }
+.overlay.open { display:block; }
+.drawer {
+  position:fixed;top:0;left:-280px;width:280px;height:100%;
+  background:var(--bg2);z-index:51;transition:left .25s ease;
+  display:flex;flex-direction:column;
+}
+.drawer.open { left:0; }
+.drawer-header {
+  background:var(--header);padding:20px 16px 16px;
+}
+.light .drawer-header { background:#0a0a12; }
+.drawer-header img { width:56px;height:56px;border-radius:50%; }
+.drawer-header .dname { color:#fff;font-size:16px;font-weight:600;margin-top:12px; }
+.drawer-header .dsub { color:var(--accent);font-size:13px; }
+.drawer-items { flex:1;overflow-y:auto;padding:8px 0; }
+.drawer-item {
+  display:flex;align-items:center;gap:16px;padding:14px 24px;cursor:pointer;
+  color:var(--fg);font-size:15px;
+}
+.drawer-item:active { background:var(--bg4); }
+.drawer-item .di-icon { font-size:20px;width:24px;text-align:center;color:var(--fg-dim); }
+.drawer-sep { height:1px;background:var(--border);margin:8px 0; }
+.drawer-footer { padding:16px 24px;color:var(--fg-dim);font-size:12px; }
+/* ── HOME SCREEN (Chat list) ─────────────── */
+.home-header {
+  background: var(--header); height:56px; display:flex; align-items:center;
+  padding:0 8px; gap:8px; flex-shrink:0;
+  border-bottom:1px solid var(--border);
+}
+.light .home-header { background:#0a0a12; color:#fff; }
+.home-header .hamburger { width:40px;height:40px;border:none;background:none;color:#fff;font-size:22px;cursor:pointer;border-radius:50%;display:flex;align-items:center;justify-content:center; }
+.home-header .hamburger:active { background:rgba(255,255,255,.1); }
+.home-header .title { flex:1;color:#fff;font-size:20px;font-weight:700;letter-spacing:1px; }
+.home-header .search-btn { width:40px;height:40px;border:none;background:none;color:#fff;font-size:20px;cursor:pointer;border-radius:50%; }
+.chat-list { flex:1;overflow-y:auto; }
+.chat-card {
+  display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;
+  border-bottom:1px solid var(--border);
+}
+.chat-card:active { background:var(--bg4); }
+.chat-card img { width:52px;height:52px;border-radius:50%;object-fit:cover; }
+.chat-card .cc-info { flex:1; }
+.chat-card .cc-top { display:flex;justify-content:space-between;align-items:center; }
+.chat-card .cc-name { font-size:15px;font-weight:600; }
+.chat-card .cc-time { font-size:12px;color:var(--fg-dim); }
+.chat-card .cc-preview { font-size:13px;color:var(--fg-dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw; }
+.chat-card .cc-badge { background:var(--accent);color:#000;border-radius:50%;width:22px;height:22px;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center; }
+.fab {
+  position:absolute;bottom:20px;right:20px;width:56px;height:56px;
+  border-radius:50%;background:var(--accent);border:none;color:#000;
+  font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(3,218,198,.3);
+  display:flex;align-items:center;justify-content:center;
+}
+.fab:active { background:#04f0d8; }
+/* ── CHAT SCREEN ─────────────────────────── */
+.messages {
+  flex:1;overflow-y:auto;padding:8px 8px 8px;
+  display:flex;flex-direction:column;gap:2px;
+  background:var(--bg);
+}
+.msg-date {
+  text-align:center;margin:12px 0 8px;font-size:12px;color:var(--fg-dim);
+  background:var(--bg3);display:inline-block;padding:4px 12px;border-radius:12px;
+  align-self:center;
+}
+.msg {
+  max-width:82%;padding:8px 12px;border-radius:12px;font-size:14px;
+  line-height:1.45;position:relative;word-wrap:break-word;
+  animation: msgIn .2s ease;
+}
+@keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.msg.user {
+  background:var(--bubble-user);color:#e0e8f0;align-self:flex-end;
+  border-bottom-right-radius:4px;
+}
+.msg.bot {
+  background:var(--bubble-bot);color:var(--fg);align-self:flex-start;
+  border-bottom-left-radius:4px;border:1px solid var(--border);
+}
+.light .msg.bot { background:#e8eaed;color:#1a1a2e;border:none; }
+.msg .time {
+  font-size:10px;color:var(--fg-dim);float:right;margin:4px 0 -2px 12px;
+}
+.msg .check { color:var(--accent);font-size:10px;margin-left:2px; }
+.msg code {
+  background:rgba(255,255,255,.08);padding:1px 5px;border-radius:3px;
+  font-family:'Consolas',monospace;font-size:13px;
+}
+.light .msg code { background:rgba(0,0,0,.06); }
+.msg pre {
+  background:#06060c;padding:10px;border-radius:8px;margin:6px 0;
+  overflow-x:auto;font-family:'Consolas',monospace;font-size:12px;color:#00e676;
+}
+.light .msg pre { background:#1a1a2e;color:#00e676; }
+.msg .tool-result {
+  background:rgba(3,218,198,.08);border-left:3px solid var(--accent);
+  padding:6px 10px;margin:6px 0;border-radius:0 6px 6px 0;font-size:13px;
+}
+.typing-indicator {
+  align-self:flex-start;background:var(--bubble-bot);border:1px solid var(--border);
+  padding:12px 16px;border-radius:12px;border-bottom-left-radius:4px;
+  display:none;gap:4px;align-items:center;
+}
+.typing-indicator.show { display:flex; }
+.typing-dot {
+  width:8px;height:8px;border-radius:50%;background:var(--fg-dim);
+  animation:typingBounce .6s infinite alternate;
+}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{0%{opacity:.3;transform:translateY(0)}100%{opacity:1;transform:translateY(-4px)}}
+.scroll-bottom {
+  position:absolute;bottom:70px;right:16px;width:40px;height:40px;
+  border-radius:50%;background:var(--bg3);border:1px solid var(--border);
+  color:var(--fg);font-size:18px;cursor:pointer;display:none;
+  align-items:center;justify-content:center;z-index:5;
+}
+.scroll-bottom.show { display:flex; }
+/* ── INPUT BAR ───────────────────────────── */
+.input-bar {
+  display:flex;align-items:flex-end;gap:6px;padding:6px 8px;
+  background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0;
+}
+.input-bar .attach {
+  width:40px;height:40px;border:none;background:none;color:var(--fg-dim);
+  font-size:22px;cursor:pointer;border-radius:50%;flex-shrink:0;
+}
+.input-bar .attach:active { background:var(--bg4); }
+.input-bar textarea {
+  flex:1;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:20px;padding:10px 16px;font-size:15px;resize:none;
+  font-family:inherit;max-height:120px;min-height:40px;line-height:1.3;
+  outline:none;
+}
+.input-bar textarea:focus { border-color:var(--accent); }
+.input-bar textarea::placeholder { color:var(--fg-dim); }
+.input-bar .send {
+  width:44px;height:44px;border:none;border-radius:50%;
+  background:var(--accent);color:#000;font-size:20px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background .15s;
+}
+.input-bar .send:active { background:#04f0d8; }
+.input-bar .send.disabled { background:var(--bg4);color:var(--fg-dim);pointer-events:none; }
+/* ── CONTEXT MENU (long press on message) ── */
+.ctx-menu {
+  display:none;position:fixed;background:var(--bg2);border:1px solid var(--border);
+  border-radius:12px;padding:6px 0;z-index:100;min-width:160px;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);
+}
+.ctx-menu.open { display:block; }
+.ctx-item { padding:12px 20px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:12px; }
+.ctx-item:active { background:var(--bg4); }
+.ctx-icon { font-size:16px;color:var(--fg-dim);width:20px;text-align:center; }
+/* ── SETTINGS SCREEN ─────────────────────── */
+.settings-body { flex:1;overflow-y:auto;padding:0; }
+.settings-profile {
+  display:flex;flex-direction:column;align-items:center;padding:24px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+}
+.settings-profile img { width:80px;height:80px;border-radius:50%; }
+.settings-profile .sp-name { font-size:18px;font-weight:700;margin-top:12px; }
+.settings-profile .sp-sub { font-size:13px;color:var(--accent);margin-top:2px; }
+.settings-group { padding:16px 0 8px 20px;font-size:13px;color:var(--accent);font-weight:600; }
+.settings-item {
+  display:flex;align-items:center;gap:16px;padding:14px 20px;cursor:pointer;
+  border-bottom:1px solid var(--border);
+}
+.settings-item:active { background:var(--bg4); }
+.si-icon { font-size:20px;color:var(--fg-dim);width:24px;text-align:center; }
+.si-content { flex:1; }
+.si-label { font-size:15px; }
+.si-desc { font-size:12px;color:var(--fg-dim);margin-top:1px; }
+.si-right { color:var(--fg-dim);font-size:14px; }
+/* Toggle switch */
+.toggle { position:relative;width:44px;height:24px;flex-shrink:0; }
+.toggle input { opacity:0;width:0;height:0; }
+.toggle .slider {
+  position:absolute;inset:0;background:var(--bg4);border-radius:12px;cursor:pointer;
+  transition:.2s;
+}
+.toggle .slider:before {
+  content:"";position:absolute;width:18px;height:18px;border-radius:50%;
+  background:#fff;left:3px;top:3px;transition:.2s;
+}
+.toggle input:checked + .slider { background:var(--accent); }
+.toggle input:checked + .slider:before { transform:translateX(20px); }
+/* ── WALLET SCREEN ───────────────────────── */
+.wallet-body { flex:1;overflow-y:auto;padding:16px; }
+.wallet-card {
+  background:linear-gradient(135deg, #0a2e4a, #0e0e1a);
+  border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;
+}
+.light .wallet-card { background:linear-gradient(135deg,#e0f0ff,#f0f2f5);border-color:#d0d2d6; }
+.wallet-card .wc-label { font-size:13px;color:var(--fg-dim); }
+.wallet-card .wc-balance { font-size:28px;font-weight:700;margin:4px 0;color:var(--accent); }
+.wallet-card .wc-usd { font-size:14px;color:var(--fg-dim); }
+.wallet-actions { display:flex;gap:12px;margin:16px 0; }
+.wallet-actions button {
+  flex:1;padding:12px;border:1px solid var(--border);border-radius:12px;
+  background:var(--bg3);color:var(--fg);font-size:14px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.wallet-actions button:active { background:var(--bg4); }
+.wallet-actions .wa-icon { font-size:22px; }
+.wallet-section { margin-top:16px; }
+.wallet-section .ws-title { font-size:14px;font-weight:600;margin-bottom:8px;color:var(--accent); }
+.wallet-coin {
+  display:flex;align-items:center;gap:12px;padding:12px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;
+}
+.wallet-coin .wco-icon { font-size:28px; }
+.wallet-coin .wco-info { flex:1; }
+.wallet-coin .wco-name { font-size:14px;font-weight:600; }
+.wallet-coin .wco-amount { font-size:12px;color:var(--fg-dim); }
+.wallet-coin .wco-price { text-align:right; }
+.wallet-coin .wco-val { font-size:14px;font-weight:600; }
+.wallet-coin .wco-change { font-size:12px; }
+.wco-change.up { color:var(--green); }
+.wco-change.down { color:var(--red); }
+.wallet-connect-section { margin-top:20px;padding:16px;background:var(--bg2);border:1px solid var(--border);border-radius:12px; }
+.wallet-connect-section .wcs-title { font-size:14px;font-weight:600;margin-bottom:4px; }
+.wallet-connect-section .wcs-desc { font-size:12px;color:var(--fg-dim);margin-bottom:12px; }
+.wallet-connect-btn {
+  width:100%;padding:12px;border:1px solid var(--accent);border-radius:10px;
+  background:transparent;color:var(--accent);font-size:14px;font-weight:600;cursor:pointer;
+}
+.wallet-connect-btn:active { background:rgba(3,218,198,.1); }
+.api-key-input {
+  width:100%;padding:10px 12px;background:var(--bg-input);color:var(--fg);
+  border:1px solid var(--border);border-radius:8px;font-size:13px;margin-top:8px;
+  font-family:monospace;outline:none;
+}
+.api-key-input:focus { border-color:var(--accent); }
+.api-key-input::placeholder { color:var(--fg-dim); }
+/* ── QR / SHARE SCREEN ───────────────────── */
+.share-body { flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;align-items:center; }
+.share-body .logo-big { width:80px;height:80px;border-radius:50%;margin-bottom:16px; }
+.share-body h2 { font-size:20px;letter-spacing:3px;margin-bottom:4px; }
+.share-body .sub { color:var(--accent);font-size:13px;letter-spacing:2px;margin-bottom:24px; }
+.qr-box {
+  background:#fff;padding:16px;border-radius:16px;margin-bottom:20px;
+}
+.qr-box img { width:200px;height:200px;image-rendering:pixelated; }
+.share-label { font-size:14px;font-weight:600;margin-bottom:4px; }
+.share-desc { font-size:12px;color:var(--fg-dim);text-align:center;max-width:280px;margin-bottom:20px; }
+.share-btn {
+  width:100%;max-width:280px;padding:14px;border:none;border-radius:12px;
+  background:var(--accent);color:#000;font-size:15px;font-weight:700;cursor:pointer;
+  margin-bottom:10px;
+}
+.share-btn:active { background:#04f0d8; }
+.share-btn.outline {
+  background:transparent;border:1px solid var(--accent);color:var(--accent);
+}
+/* ── INSTRUCTIONS SCREEN ─────────────────── */
+.instructions-body { flex:1;overflow-y:auto;padding:20px; }
+.inst-step {
+  display:flex;gap:12px;margin-bottom:20px;
+}
+.inst-num {
+  width:28px;height:28px;border-radius:50%;background:var(--accent);color:#000;
+  font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.inst-text { font-size:14px;line-height:1.5; }
+.inst-text b { color:var(--accent); }
+/* ── ATTACH MENU ─────────────────────────── */
+.attach-menu {
+  display:none;position:fixed;bottom:60px;left:8px;right:8px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:16px;z-index:60;
+}
+.attach-menu.open { display:block; }
+.attach-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:12px; }
+.attach-option {
+  display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:8px;
+}
+.attach-option .ao-icon {
+  width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+}
+.attach-option .ao-label { font-size:11px;color:var(--fg-dim); }
+/* ── SEARCH BAR ──────────────────────────── */
+.search-bar {
+  display:none;padding:8px;background:var(--bg2);border-bottom:1px solid var(--border);
+}
+.search-bar.open { display:flex;gap:8px;align-items:center; }
+.search-bar input {
+  flex:1;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:20px;padding:8px 16px;font-size:14px;outline:none;
+}
+.search-bar input:focus { border-color:var(--accent); }
+.search-bar .search-close { background:none;border:none;color:var(--fg-dim);font-size:20px;cursor:pointer; }
+/* ── INSTALL BANNER ──────────────────────── */
+.install-banner {
+  display:none;padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border);
+  align-items:center;gap:12px;
+}
+.install-banner.show { display:flex; }
+.install-banner img { width:40px;height:40px;border-radius:10px; }
+.install-banner .ib-text { flex:1;font-size:13px; }
+.install-banner .ib-text b { display:block;font-size:14px; }
+.install-banner .ib-btn {
+  background:var(--accent);color:#000;border:none;border-radius:8px;
+  padding:8px 16px;font-weight:700;font-size:13px;cursor:pointer;
+}
+.install-banner .ib-close { background:none;border:none;color:var(--fg-dim);font-size:18px;cursor:pointer; }
+</style>
+</head>
+<body>
+
+<!-- ═══════ OVERLAY + DRAWER ═══════ -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <img src="icon-192.png" alt="Logo">
+    <div class="dname">Sub-Zero</div>
+    <div class="dsub">Flawless Victory</div>
+  </div>
+  <div class="drawer-items">
+    <div class="drawer-item" onclick="showScreen('chat');closeDrawer()"><span class="di-icon">💬</span>Spine Rip Chat</div>
+    <div class="drawer-item" onclick="showScreen('wallet');closeDrawer()"><span class="di-icon">💰</span>Crypto Wallet</div>
+    <div class="drawer-item" onclick="showScreen('share');closeDrawer()"><span class="di-icon">📥</span>Download Desktop</div>
+    <div class="drawer-item" onclick="showScreen('instructions');closeDrawer()"><span class="di-icon">📖</span>Instructions</div>
+    <div class="drawer-sep"></div>
+    <div class="drawer-item" onclick="showScreen('settings');closeDrawer()"><span class="di-icon">⚙️</span>Settings</div>
+    <div class="drawer-item" onclick="toggleTheme();closeDrawer()"><span class="di-icon" id="theme-icon">🌙</span><span id="theme-label">Dark Theme</span></div>
+    <div class="drawer-sep"></div>
+    <div class="drawer-item" onclick="showScreen('share');closeDrawer()"><span class="di-icon">👥</span>Invite Friends</div>
+  </div>
+  <div class="drawer-footer">SubZero v2.5 • Flawless Victory</div>
+</div>
+
+<!-- ═══════ INSTALL BANNER ═══════ -->
+<div class="install-banner" id="installBanner">
+  <img src="icon-192.png" alt="">
+  <div class="ib-text"><b>SubZero</b>Install the app on your phone</div>
+  <button class="ib-btn" onclick="installApp()">Install</button>
+  <button class="ib-close" onclick="dismissInstall()">✕</button>
+</div>
+
+<!-- ═══════ HOME SCREEN ═══════ -->
+<div class="screen active" id="screen-home">
+  <div class="home-header">
+    <button class="hamburger" onclick="openDrawer()">☰</button>
+    <div class="title">SubZero</div>
+    <button class="search-btn" onclick="toggleSearch()">🔍</button>
+  </div>
+  <div class="search-bar" id="homeSearch">
+    <input type="text" placeholder="Search..." id="searchInput" oninput="filterChats()">
+    <button class="search-close" onclick="toggleSearch()">✕</button>
+  </div>
+  <div class="chat-list" id="chatList">
+    <div class="chat-card" onclick="showScreen('chat')">
+      <img src="icon-192.png" alt="">
+      <div class="cc-info">
+        <div class="cc-top">
+          <span class="cc-name">Spine Rip</span>
+          <span class="cc-time" id="lastTime">now</span>
+        </div>
+        <div class="cc-preview" id="lastPreview">Tap to start chatting...</div>
+      </div>
+    </div>
+    <div class="chat-card" onclick="showScreen('wallet')">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#f7931a,#ff6b00);display:flex;align-items:center;justify-content:center;font-size:24px;">₿</div>
+      <div class="cc-info">
+        <div class="cc-top">
+          <span class="cc-name">Crypto Wallet</span>
+          <span class="cc-time">—</span>
+        </div>
+        <div class="cc-preview">View balances & connect wallets</div>
+      </div>
+    </div>
+  </div>
+  <button class="fab" onclick="showScreen('chat')">✏️</button>
+</div>
+
+<!-- ═══════ CHAT SCREEN ═══════ -->
+<div class="screen" id="screen-chat">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <img class="avatar" src="icon-192.png" alt="">
+    <div class="info">
+      <div class="name">Spine Rip</div>
+      <div class="status" id="chatStatus">online • qwen2.5:1.5b</div>
+    </div>
+    <button class="hbtn" onclick="toggleChatSearch()">🔍</button>
+    <button class="hbtn" onclick="showChatMenu(event)">⋮</button>
+  </div>
+  <div class="search-bar" id="chatSearch">
+    <input type="text" placeholder="Search messages..." id="chatSearchInput" oninput="searchMessages()">
+    <button class="search-close" onclick="toggleChatSearch()">✕</button>
+  </div>
+  <div class="messages" id="messages" onscroll="onMessagesScroll()">
+    <div class="msg-date">Today</div>
+  </div>
+  <div class="typing-indicator" id="typing">
+    <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+  </div>
+  <button class="scroll-bottom" id="scrollBtn" onclick="scrollToBottom()">↓</button>
+  <div class="input-bar">
+    <button class="attach" onclick="toggleAttach()">📎</button>
+    <textarea id="msgInput" placeholder="Message" rows="1" oninput="autoGrow(this);updateSend()"></textarea>
+    <button class="send disabled" id="sendBtn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<!-- ═══════ WALLET SCREEN ═══════ -->
+<div class="screen" id="screen-wallet">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">Crypto Wallet</div><div class="status">Universal • Multi-Chain</div></div>
+    <button class="hbtn" onclick="refreshWallet()">🔄</button>
+  </div>
+  <div class="wallet-body">
+    <div class="wallet-card">
+      <div class="wc-label">Total Balance</div>
+      <div class="wc-balance" id="totalBalance">$0.00</div>
+      <div class="wc-usd">Portfolio value (USD)</div>
+    </div>
+    <div class="wallet-actions">
+      <button onclick="walletAction('send')"><span class="wa-icon">↑</span>Send</button>
+      <button onclick="walletAction('receive')"><span class="wa-icon">↓</span>Receive</button>
+      <button onclick="walletAction('swap')"><span class="wa-icon">⇄</span>Swap</button>
+      <button onclick="walletAction('buy')"><span class="wa-icon">+</span>Buy</button>
+    </div>
+    <div class="wallet-section">
+      <div class="ws-title">Assets</div>
+      <div id="walletAssets">
+        <div class="wallet-coin"><span class="wco-icon">₿</span><div class="wco-info"><div class="wco-name">Bitcoin</div><div class="wco-amount">0.00 BTC</div></div><div class="wco-price"><div class="wco-val">$0.00</div><div class="wco-change up">—</div></div></div>
+        <div class="wallet-coin"><span class="wco-icon">Ξ</span><div class="wco-info"><div class="wco-name">Ethereum</div><div class="wco-amount">0.00 ETH</div></div><div class="wco-price"><div class="wco-val">$0.00</div><div class="wco-change up">—</div></div></div>
+        <div class="wallet-coin"><span class="wco-icon">◎</span><div class="wco-info"><div class="wco-name">Solana</div><div class="wco-amount">0.00 SOL</div></div><div class="wco-price"><div class="wco-val">$0.00</div><div class="wco-change up">—</div></div></div>
+        <div class="wallet-coin"><span class="wco-icon">◈</span><div class="wco-info"><div class="wco-name">USDT</div><div class="wco-amount">0.00 USDT</div></div><div class="wco-price"><div class="wco-val">$0.00</div><div class="wco-change">stable</div></div></div>
+      </div>
+    </div>
+    <div class="wallet-connect-section">
+      <div class="wcs-title">🔗 Connect Wallet</div>
+      <div class="wcs-desc">Connect an external wallet or enter your API keys to enable trading and real-time balances.</div>
+      <button class="wallet-connect-btn" onclick="connectWallet('walletconnect')">WalletConnect</button>
+      <button class="wallet-connect-btn" style="margin-top:8px" onclick="connectWallet('metamask')">MetaMask</button>
+      <button class="wallet-connect-btn" style="margin-top:8px" onclick="connectWallet('phantom')">Phantom (Solana)</button>
+      <input class="api-key-input" id="cryptoApiKey" placeholder="Exchange API Key (Binance, Coinbase...)" style="margin-top:12px">
+      <input class="api-key-input" id="cryptoApiSecret" placeholder="API Secret" style="margin-top:6px">
+      <button class="wallet-connect-btn" style="margin-top:8px" onclick="saveCryptoKeys()">Save API Keys</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SETTINGS SCREEN ═══════ -->
+<div class="screen" id="screen-settings">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">Settings</div></div>
+  </div>
+  <div class="settings-body">
+    <div class="settings-profile">
+      <img src="icon-192.png" alt="">
+      <div class="sp-name">SubZero</div>
+      <div class="sp-sub">Flawless Victory • v2.5</div>
+    </div>
+    <div class="settings-group">AI Engine</div>
+    <div class="settings-item" onclick="cycleModel()">
+      <span class="si-icon">🧠</span>
+      <div class="si-content"><div class="si-label">AI Model</div><div class="si-desc">Change the Ollama model</div></div>
+      <span class="si-right" id="modelDisplay">qwen2.5:1.5b</span>
+    </div>
+    <div class="settings-item" onclick="checkStatus()">
+      <span class="si-icon">🟢</span>
+      <div class="si-content"><div class="si-label">Connection Status</div><div class="si-desc" id="connStatus">Checking...</div></div>
+    </div>
+    <div class="settings-item">
+      <span class="si-icon">🌐</span>
+      <div class="si-content"><div class="si-label">Server Address</div><div class="si-desc">Where Spine Rip is running</div></div>
+      <span class="si-right" id="serverAddr">auto</span>
+    </div>
+    <div class="settings-group">Appearance</div>
+    <div class="settings-item" onclick="toggleTheme()">
+      <span class="si-icon">🌙</span>
+      <div class="si-content"><div class="si-label">Dark Theme</div><div class="si-desc">Switch between dark and light</div></div>
+      <label class="toggle"><input type="checkbox" id="themeToggle" checked onchange="toggleTheme()"><span class="slider"></span></label>
+    </div>
+    <div class="settings-group">Data</div>
+    <div class="settings-item" onclick="clearHistory()">
+      <span class="si-icon">🗑️</span>
+      <div class="si-content"><div class="si-label">Clear Chat History</div><div class="si-desc">Delete all messages</div></div>
+    </div>
+    <div class="settings-group">About</div>
+    <div class="settings-item" onclick="showScreen('share')">
+      <span class="si-icon">📥</span>
+      <div class="si-content"><div class="si-label">Download Desktop App</div><div class="si-desc">Get SubZero for your PC</div></div>
+    </div>
+    <div class="settings-item" onclick="showScreen('instructions')">
+      <span class="si-icon">📖</span>
+      <div class="si-content"><div class="si-label">How to Use</div><div class="si-desc">Setup and usage guide</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ SHARE / QR SCREEN ═══════ -->
+<div class="screen" id="screen-share">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">Download & Share</div></div>
+  </div>
+  <div class="share-body">
+    <img class="logo-big" src="icon-192.png" alt="">
+    <h2>S U B - Z E R O</h2>
+    <div class="sub">F L A W L E S S  V I C T O R Y</div>
+    <div class="share-label">Scan to Download Desktop App</div>
+    <div class="qr-box">
+      <img id="qrImage" src="" alt="QR Code">
+    </div>
+    <div class="share-desc">Share this QR code with anyone — they'll get the full SubZero desktop app from GitHub.</div>
+    <button class="share-btn" onclick="shareApp()">Share SubZero</button>
+    <button class="share-btn outline" onclick="copyLink()">Copy Download Link</button>
+  </div>
+</div>
+
+<!-- ═══════ INSTRUCTIONS SCREEN ═══════ -->
+<div class="screen" id="screen-instructions">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">How to Use SubZero</div></div>
+  </div>
+  <div class="instructions-body">
+    <h3 style="color:var(--accent);margin-bottom:16px;">📱 Using the Mobile App</h3>
+    <div class="inst-step"><div class="inst-num">1</div><div class="inst-text">Open the app and tap <b>Spine Rip Chat</b> to start messaging the AI.</div></div>
+    <div class="inst-step"><div class="inst-num">2</div><div class="inst-text">Type any question or command. Spine Rip uses <b>qwen2.5:1.5b</b> running locally on your PC — no cloud needed.</div></div>
+    <div class="inst-step"><div class="inst-num">3</div><div class="inst-text">Spine Rip can <b>run commands</b>, <b>read/write files</b>, <b>search the web</b>, and <b>automate your browser</b> — all from your phone.</div></div>
+    <div class="inst-step"><div class="inst-num">4</div><div class="inst-text">Long-press any message to <b>copy</b>, <b>reply</b>, or <b>delete</b> it.</div></div>
+
+    <h3 style="color:var(--accent);margin:24px 0 16px;">💻 Desktop Setup</h3>
+    <div class="inst-step"><div class="inst-num">1</div><div class="inst-text">On your PC, go to your <b>Desktop</b> and double-click the <b>"Sub-Zero Flawless Victory"</b> shortcut, or the <b>"Spine Rip"</b> icon.</div></div>
+    <div class="inst-step"><div class="inst-num">2</div><div class="inst-text">If you don't have the desktop app yet, scan the QR code in the <b>Download & Share</b> section to get it from GitHub.</div></div>
+    <div class="inst-step"><div class="inst-num">3</div><div class="inst-text">Make sure <b>Ollama</b> is running on your PC: open a terminal and type <b>ollama serve</b></div></div>
+    <div class="inst-step"><div class="inst-num">4</div><div class="inst-text">Pull the AI model: <b>ollama pull qwen2.5:1.5b</b></div></div>
+    <div class="inst-step"><div class="inst-num">5</div><div class="inst-text">Start the mobile server: <b>python sz_server.py</b> — then your phone connects automatically over WiFi.</div></div>
+
+    <h3 style="color:var(--accent);margin:24px 0 16px;">🔗 Connecting Your Phone</h3>
+    <div class="inst-step"><div class="inst-num">1</div><div class="inst-text">Your phone and PC must be on the <b>same WiFi network</b>.</div></div>
+    <div class="inst-step"><div class="inst-num">2</div><div class="inst-text">Scan the QR code that appears when you run <b>sz_server.py</b>, or type the URL manually.</div></div>
+    <div class="inst-step"><div class="inst-num">3</div><div class="inst-text">Tap <b>"Add to Home Screen"</b> in your browser menu to install SubZero as an app on your phone.</div></div>
+  </div>
+</div>
+
+<!-- ═══════ CONTEXT MENU ═══════ -->
+<div class="ctx-menu" id="ctxMenu">
+  <div class="ctx-item" onclick="ctxAction('reply')"><span class="ctx-icon">↩️</span>Reply</div>
+  <div class="ctx-item" onclick="ctxAction('copy')"><span class="ctx-icon">📋</span>Copy</div>
+  <div class="ctx-item" onclick="ctxAction('forward')"><span class="ctx-icon">↗️</span>Forward</div>
+  <div class="ctx-item" onclick="ctxAction('delete')"><span class="ctx-icon">🗑️</span>Delete</div>
+</div>
+
+<!-- ═══════ ATTACH MENU ═══════ -->
+<div class="attach-menu" id="attachMenu">
+  <div class="attach-grid">
+    <div class="attach-option" onclick="attachAction('photo')"><div class="ao-icon" style="background:#4e8ef7">📷</div><div class="ao-label">Photo</div></div>
+    <div class="attach-option" onclick="attachAction('file')"><div class="ao-icon" style="background:#e65750">📄</div><div class="ao-label">File</div></div>
+    <div class="attach-option" onclick="attachAction('command')"><div class="ao-icon" style="background:#9b59b6">⌨️</div><div class="ao-label">Command</div></div>
+    <div class="attach-option" onclick="attachAction('tools')"><div class="ao-icon" style="background:#03dac6">🔧</div><div class="ao-label">Tools</div></div>
+  </div>
+</div>
+
+<!-- ═══════ CHAT MENU (3-dot) ═══════ -->
+<div class="ctx-menu" id="chatMenu">
+  <div class="ctx-item" onclick="toggleChatSearch();closeChatMenu()"><span class="ctx-icon">🔍</span>Search</div>
+  <div class="ctx-item" onclick="clearHistory();closeChatMenu()"><span class="ctx-icon">🗑️</span>Clear history</div>
+  <div class="ctx-item" onclick="showScreen('wallet');closeChatMenu()"><span class="ctx-icon">💰</span>Wallet</div>
+  <div class="ctx-item" onclick="showScreen('share');closeChatMenu()"><span class="ctx-icon">📤</span>Share app</div>
+  <div class="ctx-item" onclick="showScreen('settings');closeChatMenu()"><span class="ctx-icon">⚙️</span>Settings</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+const API = location.origin;
+const GITHUB = "https://github.com/jhawpetoss6-collab/subzero";
+let messages = JSON.parse(localStorage.getItem('sz_messages') || '[]');
+let darkMode = localStorage.getItem('sz_dark') !== 'false';
+let model = localStorage.getItem('sz_model') || 'qwen2.5:1.5b';
+let session = localStorage.getItem('sz_session') || crypto.randomUUID?.() || Date.now().toString();
+let sending = false;
+let ctxTarget = null;
+let deferredPrompt = null;
+localStorage.setItem('sz_session', session);
+
+// ══════════════════════════════════════════════
+//  SCREENS
+// ══════════════════════════════════════════════
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  if (name === 'chat') {
+    renderMessages();
+    scrollToBottom();
+    checkStatus();
+  }
+  closeMenus();
+}
+
+// ══════════════════════════════════════════════
+//  DRAWER
+// ══════════════════════════════════════════════
+function openDrawer() { document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
+function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
+
+// ══════════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════════
+function applyTheme() {
+  document.body.classList.toggle('light', !darkMode);
+  const tog = document.getElementById('themeToggle');
+  if (tog) tog.checked = darkMode;
+  document.getElementById('theme-icon').textContent = darkMode ? '🌙' : '☀️';
+  document.getElementById('theme-label').textContent = darkMode ? 'Dark Theme' : 'Light Theme';
+  document.querySelector('meta[name="theme-color"]').content = darkMode ? '#0a0a12' : '#0a0a12';
+  localStorage.setItem('sz_dark', darkMode);
+}
+function toggleTheme() { darkMode = !darkMode; applyTheme(); }
+applyTheme();
+
+// ══════════════════════════════════════════════
+//  MESSAGES
+// ══════════════════════════════════════════════
+function renderMessages() {
+  const el = document.getElementById('messages');
+  el.innerHTML = '<div class="msg-date">Today</div>';
+  messages.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = 'msg ' + m.role;
+    div.dataset.index = i;
+    let html = formatText(m.content);
+    html += `<span class="time">${m.time || ''}`;
+    if (m.role === 'user') html += ' <span class="check">✓✓</span>';
+    html += '</span>';
+    if (m.tools && m.tools.length) {
+      m.tools.forEach(t => {
+        const icon = t.success ? '✅' : '❌';
+        html += `<div class="tool-result">${icon} <b>${t.tool}</b>: ${escHtml(t.output.substring(0,300))}</div>`;
+      });
+    }
+    div.innerHTML = html;
+    // Long press
+    let timer;
+    div.addEventListener('touchstart', e => { timer = setTimeout(() => showCtx(e, i), 500); });
+    div.addEventListener('touchend', () => clearTimeout(timer));
+    div.addEventListener('touchmove', () => clearTimeout(timer));
+    div.addEventListener('contextmenu', e => { e.preventDefault(); showCtx(e, i); });
+    el.appendChild(div);
+  });
+}
+
+function formatText(text) {
+  let t = escHtml(text);
+  // Code blocks
+  t = t.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre>$2</pre>');
+  t = t.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Bold
+  t = t.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  t = t.replace(/\*(.+?)\*/g, '<i>$1</i>');
+  // Newlines
+  t = t.replace(/\n/g, '<br>');
+  return t;
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function now() {
+  return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+}
+
+function saveMessages() {
+  localStorage.setItem('sz_messages', JSON.stringify(messages.slice(-100)));
+  // Update home preview
+  if (messages.length) {
+    const last = messages[messages.length - 1];
+    document.getElementById('lastPreview').textContent = last.content.substring(0, 50);
+    document.getElementById('lastTime').textContent = last.time || 'now';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  SEND MESSAGE
+// ══════════════════════════════════════════════
+async function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text || sending) return;
+
+  // Add user message
+  messages.push({ role:'user', content:text, time:now() });
+  input.value = '';
+  autoGrow(input);
+  updateSend();
+  renderMessages();
+  scrollToBottom();
+  saveMessages();
+
+  // Show typing
+  sending = true;
+  document.getElementById('typing').classList.add('show');
+  scrollToBottom();
+
+  try {
+    const res = await fetch(API + '/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ message:text, session, model })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      messages.push({ role:'bot', content:data.response, time:now(), tools:data.tools||[] });
+    } else {
+      messages.push({ role:'bot', content:'⚠️ ' + (data.error || 'Unknown error'), time:now() });
+    }
+  } catch (e) {
+    messages.push({ role:'bot', content:'⚠️ Cannot reach Spine Rip server. Make sure sz_server.py is running on your PC and you\'re on the same WiFi.', time:now() });
+  }
+
+  sending = false;
+  document.getElementById('typing').classList.remove('show');
+  renderMessages();
+  scrollToBottom();
+  saveMessages();
+}
+
+// ══════════════════════════════════════════════
+//  INPUT
+// ══════════════════════════════════════════════
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+function updateSend() {
+  const btn = document.getElementById('sendBtn');
+  const val = document.getElementById('msgInput').value.trim();
+  btn.classList.toggle('disabled', !val);
+}
+// Enter to send (no shift)
+document.getElementById('msgInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+// ══════════════════════════════════════════════
+//  SCROLL
+// ══════════════════════════════════════════════
+function scrollToBottom() {
+  const el = document.getElementById('messages');
+  setTimeout(() => { el.scrollTop = el.scrollHeight; }, 50);
+}
+function onMessagesScroll() {
+  const el = document.getElementById('messages');
+  const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+  document.getElementById('scrollBtn').classList.toggle('show', !atBottom);
+}
+
+// ══════════════════════════════════════════════
+//  CONTEXT MENU (long press)
+// ══════════════════════════════════════════════
+function showCtx(e, idx) {
+  ctxTarget = idx;
+  const menu = document.getElementById('ctxMenu');
+  const x = e.touches ? e.touches[0].clientX : e.clientX;
+  const y = e.touches ? e.touches[0].clientY : e.clientY;
+  menu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
+  menu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
+  menu.classList.add('open');
+  navigator.vibrate?.(30);
+}
+function ctxAction(action) {
+  const menu = document.getElementById('ctxMenu');
+  menu.classList.remove('open');
+  if (ctxTarget === null) return;
+  const msg = messages[ctxTarget];
+  if (action === 'copy') {
+    navigator.clipboard?.writeText(msg.content);
+  } else if (action === 'reply') {
+    document.getElementById('msgInput').value = '> ' + msg.content.substring(0, 60) + '\n';
+    document.getElementById('msgInput').focus();
+  } else if (action === 'delete') {
+    messages.splice(ctxTarget, 1);
+    renderMessages();
+    saveMessages();
+  } else if (action === 'forward') {
+    if (navigator.share) {
+      navigator.share({ text: msg.content });
+    } else {
+      navigator.clipboard?.writeText(msg.content);
+    }
+  }
+  ctxTarget = null;
+}
+
+// ══════════════════════════════════════════════
+//  CHAT 3-DOT MENU
+// ══════════════════════════════════════════════
+function showChatMenu(e) {
+  const menu = document.getElementById('chatMenu');
+  menu.style.right = '8px';
+  menu.style.top = '50px';
+  menu.style.left = 'auto';
+  menu.classList.add('open');
+}
+function closeChatMenu() { document.getElementById('chatMenu').classList.remove('open'); }
+
+// ══════════════════════════════════════════════
+//  SEARCH
+// ══════════════════════════════════════════════
+function toggleSearch() { document.getElementById('homeSearch').classList.toggle('open'); }
+function toggleChatSearch() { document.getElementById('chatSearch').classList.toggle('open'); }
+function filterChats() { /* single chat, no-op for now */ }
+function searchMessages() {
+  const q = document.getElementById('chatSearchInput').value.toLowerCase();
+  document.querySelectorAll('#messages .msg').forEach(el => {
+    el.style.display = !q || el.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+// ══════════════════════════════════════════════
+//  ATTACH MENU
+// ══════════════════════════════════════════════
+function toggleAttach() { document.getElementById('attachMenu').classList.toggle('open'); }
+function attachAction(type) {
+  document.getElementById('attachMenu').classList.remove('open');
+  const input = document.getElementById('msgInput');
+  if (type === 'command') {
+    input.value = '!';
+    input.focus();
+  } else if (type === 'tools') {
+    input.value = '@tool ';
+    input.focus();
+  } else if (type === 'photo') {
+    input.value = 'take a screenshot of my desktop';
+    input.focus();
+  } else if (type === 'file') {
+    input.value = 'list files in ';
+    input.focus();
+  }
+}
+
+// ══════════════════════════════════════════════
+//  CLOSE ALL MENUS
+// ══════════════════════════════════════════════
+function closeMenus() {
+  document.getElementById('ctxMenu').classList.remove('open');
+  document.getElementById('chatMenu').classList.remove('open');
+  document.getElementById('attachMenu').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.ctx-menu') && !e.target.closest('.hbtn')) closeMenus();
+});
+
+// ══════════════════════════════════════════════
+//  SETTINGS / STATUS
+// ══════════════════════════════════════════════
+const MODELS = ['qwen2.5:1.5b','llama3.2','codellama','deepseek-coder','mistral'];
+function cycleModel() {
+  let idx = MODELS.indexOf(model);
+  idx = (idx + 1) % MODELS.length;
+  model = MODELS[idx];
+  localStorage.setItem('sz_model', model);
+  document.getElementById('modelDisplay').textContent = model;
+  document.getElementById('chatStatus').textContent = 'online • ' + model;
+}
+document.getElementById('modelDisplay').textContent = model;
+
+async function checkStatus() {
+  try {
+    const r = await fetch(API + '/api/status');
+    const d = await r.json();
+    const s = d.ollama ? '🟢 Connected' : '🔴 Ollama offline';
+    document.getElementById('connStatus').textContent = s + ' • ' + d.model;
+    document.getElementById('chatStatus').textContent = (d.ollama ? 'online' : 'offline') + ' • ' + model;
+    document.getElementById('serverAddr').textContent = location.host;
+  } catch {
+    document.getElementById('connStatus').textContent = '🔴 Server unreachable';
+    document.getElementById('chatStatus').textContent = 'offline';
+  }
+}
+
+function clearHistory() {
+  if (confirm('Clear all chat history?')) {
+    messages = [];
+    renderMessages();
+    saveMessages();
+    fetch(API + '/api/clear', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({session})
+    }).catch(() => {});
+  }
+}
+
+// ══════════════════════════════════════════════
+//  WALLET
+// ══════════════════════════════════════════════
+function walletAction(action) {
+  showScreen('chat');
+  const input = document.getElementById('msgInput');
+  if (action === 'send') input.value = 'I want to send crypto. Help me with the transaction.';
+  else if (action === 'receive') input.value = 'Show me my wallet receive address';
+  else if (action === 'swap') input.value = 'I want to swap tokens. What are current rates?';
+  else if (action === 'buy') input.value = 'I want to buy crypto. What are the best options?';
+  input.focus();
+  updateSend();
+}
+function connectWallet(type) {
+  alert(type + ' connection coming soon! For now, use the API key method below or ask Spine Rip to help set up your wallet.');
+}
+function saveCryptoKeys() {
+  const key = document.getElementById('cryptoApiKey').value.trim();
+  const secret = document.getElementById('cryptoApiSecret').value.trim();
+  if (key && secret) {
+    localStorage.setItem('sz_crypto_key', key);
+    localStorage.setItem('sz_crypto_secret', secret);
+    alert('API keys saved locally. Your keys never leave your device.');
+    refreshWallet();
+  } else {
+    alert('Please enter both API Key and Secret.');
+  }
+}
+function refreshWallet() {
+  // Ask Spine Rip for prices
+  showScreen('chat');
+  const input = document.getElementById('msgInput');
+  input.value = 'Get me the current prices for Bitcoin, Ethereum, and Solana';
+  input.focus();
+  updateSend();
+}
+
+// ══════════════════════════════════════════════
+//  SHARE / QR
+// ══════════════════════════════════════════════
+function generateQR() {
+  // Use a QR API to generate the GitHub repo QR
+  const url = encodeURIComponent(GITHUB);
+  document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${url}&bgcolor=000000&color=0088ff`;
+}
+generateQR();
+
+function shareApp() {
+  if (navigator.share) {
+    navigator.share({ title:'SubZero', text:'Check out SubZero — Flawless Victory AI', url:GITHUB });
+  } else {
+    copyLink();
+  }
+}
+function copyLink() {
+  navigator.clipboard?.writeText(GITHUB);
+  alert('Link copied: ' + GITHUB);
+}
+
+// ══════════════════════════════════════════════
+//  PWA INSTALL
+// ══════════════════════════════════════════════
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+  }
+  document.getElementById('installBanner').classList.remove('show');
+}
+function dismissInstall() {
+  document.getElementById('installBanner').classList.remove('show');
+}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+renderMessages();
+checkStatus();
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
