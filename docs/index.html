@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>SubZero</title>
+<title>Spine Rip — SubZero</title>
 <style>
 :root {
   --bg:       #0a0a12;
@@ -536,7 +536,7 @@ body {
     <img class="avatar" src="icon-192.png" alt="">
     <div class="info">
       <div class="name">Spine Rip</div>
-      <div class="status" id="chatStatus">online • qwen2.5:1.5b</div>
+      <div class="status" id="chatStatus">Spine Rip AI • online</div>
     </div>
     <button class="hbtn" onclick="toggleChatSearch()">🔍</button>
     <button class="hbtn" onclick="showChatMenu(event)">⋮</button>
@@ -716,11 +716,11 @@ body {
     <img class="logo-big" src="icon-192.png" alt="">
     <h2>S U B - Z E R O</h2>
     <div class="sub">F L A W L E S S  V I C T O R Y</div>
-    <div class="share-label">Scan to Download Desktop App</div>
+    <div class="share-label">Scan to Download — Spine Rip AI</div>
     <div class="qr-box">
       <img id="qrImage" src="" alt="QR Code">
     </div>
-    <div class="share-desc">Share this QR code with anyone — they'll get the full SubZero desktop app from GitHub.</div>
+    <div class="share-desc">Share this QR code with anyone — they'll get the full Spine Rip AI powered SubZero app from GitHub.</div>
     <button class="share-btn" onclick="shareApp()">Share SubZero</button>
     <button class="share-btn outline" onclick="copyLink()">Copy Download Link</button>
   </div>
@@ -1073,7 +1073,7 @@ function cycleModel() {
   model = MODELS[idx];
   localStorage.setItem('sz_model', model);
   document.getElementById('modelDisplay').textContent = model;
-  document.getElementById('chatStatus').textContent = 'online • ' + model;
+  document.getElementById('chatStatus').textContent = 'Spine Rip AI • online';
 }
 document.getElementById('modelDisplay').textContent = model;
 
@@ -1083,11 +1083,11 @@ async function checkStatus() {
     const d = await r.json();
     const s = d.ollama ? '🟢 Connected' : '🔴 Ollama offline';
     document.getElementById('connStatus').textContent = s + ' • ' + d.model;
-    document.getElementById('chatStatus').textContent = (d.ollama ? 'online' : 'offline') + ' • ' + model;
+      document.getElementById('chatStatus').textContent = 'Spine Rip AI • ' + (d.ollama ? 'online' : 'offline');
     document.getElementById('serverAddr').textContent = location.host;
   } catch {
     document.getElementById('connStatus').textContent = '🔴 Server unreachable';
-    document.getElementById('chatStatus').textContent = 'offline';
+    document.getElementById('chatStatus').textContent = 'Spine Rip AI • offline';
   }
 }
 

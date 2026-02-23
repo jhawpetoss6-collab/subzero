@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="favicon.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>SubZero</title>
+<title>Spine Rip — SubZero</title>
 <style>
 :root {
   --bg:       #0a0a12;
@@ -535,6 +535,13 @@ body {
 }
 .attach-option .ao-label { font-size:11px;color:var(--fg-dim); }
 /* ── SEARCH BAR ──────────────────────────── */
+/* ── SCANNER OVERLAY ─────────────────────── */
+#scanOverlay{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:1000}
+#scanOverlay.open{display:flex}
+#scanVideo{width:90vw;max-width:420px;border-radius:14px;border:2px solid var(--accent);}
+#scanHint{color:var(--accent);font-size:14px;margin-top:8px}
+#scanClose{position:absolute;top:12px;right:12px;background:transparent;border:1px solid var(--border);color:var(--fg);border-radius:10px;padding:8px 10px;}
+/* ── SEARCH BAR ──────────────────────────── */
 .search-bar {
   display:none;padding:8px;background:var(--bg2);border-bottom:1px solid var(--border);
 }
@@ -636,7 +643,7 @@ body {
     <img class="avatar" src="icon-192.png" alt="">
     <div class="info">
       <div class="name">Spine Rip</div>
-      <div class="status" id="chatStatus">online • qwen2.5:1.5b</div>
+      <div class="status" id="chatStatus">Spine Rip AI • online</div>
     </div>
     <button class="hbtn" onclick="toggleChatSearch()">🔍</button>
     <button class="hbtn" onclick="showChatMenu(event)">⋮</button>
@@ -893,11 +900,11 @@ body {
     <img class="logo-big" src="icon-192.png" alt="">
     <h2>S U B - Z E R O</h2>
     <div class="sub">F L A W L E S S  V I C T O R Y</div>
-    <div class="share-label">Scan to Download Desktop App</div>
+    <div class="share-label">Scan to Download — Spine Rip AI</div>
     <div class="qr-box">
       <img id="qrImage" src="" alt="QR Code">
     </div>
-    <div class="share-desc">Share this QR code with anyone — they'll get the full SubZero desktop app from GitHub.</div>
+    <div class="share-desc">Share this QR code with anyone — they'll get the full Spine Rip AI powered SubZero app from GitHub.</div>
     <button class="share-btn" onclick="shareApp()">Share SubZero</button>
     <button class="share-btn outline" onclick="copyLink()">Copy Download Link</button>
   </div>
@@ -974,6 +981,13 @@ body {
     <div class="attach-option" onclick="attachAction('command')"><div class="ao-icon" style="background:#9b59b6">⌨️</div><div class="ao-label">Command</div></div>
     <div class="attach-option" onclick="attachAction('tools')"><div class="ao-icon" style="background:#03dac6">🔧</div><div class="ao-label">Tools</div></div>
   </div>
+</div>
+
+<!-- ═══════ QR SCANNER OVERLAY ═══════ -->
+<div id="scanOverlay">
+  <button id="scanClose" onclick="stopQRScanner()">✕ Close</button>
+  <video id="scanVideo" autoplay muted playsinline></video>
+  <div id="scanHint">Align the QR inside the frame</div>
 </div>
 
 <!-- ═══════ CHAT MENU (3-dot) ═══════ -->
@@ -1279,7 +1293,7 @@ function cycleModel() {
   model = MODELS[idx];
   localStorage.setItem('sz_model', model);
   document.getElementById('modelDisplay').textContent = model;
-  document.getElementById('chatStatus').textContent = 'online • ' + model;
+  document.getElementById('chatStatus').textContent = 'Spine Rip AI • online';
 }
 document.getElementById('modelDisplay').textContent = model;
 
@@ -1289,11 +1303,11 @@ async function checkStatus() {
     const d = await r.json();
     const s = d.ollama ? '🟢 Connected' : '🔴 Ollama offline';
     document.getElementById('connStatus').textContent = s + ' • ' + d.model;
-    document.getElementById('chatStatus').textContent = (d.ollama ? 'online' : 'offline') + ' • ' + model;
+    document.getElementById('chatStatus').textContent = 'Spine Rip AI • ' + (d.ollama ? 'online' : 'offline');
     document.getElementById('serverAddr').textContent = location.host;
   } catch {
     document.getElementById('connStatus').textContent = '🔴 Server unreachable';
-    document.getElementById('chatStatus').textContent = 'offline';
+    document.getElementById('chatStatus').textContent = 'Spine Rip AI • offline';
   }
 }
 
@@ -1582,13 +1596,75 @@ function renderPayTx() {
 }
 renderPayTx();
 
-function startQRScanner() {
-  // Use camera to scan QR on supported devices
-  if ('BarcodeDetector' in window) {
-    alert('Point your camera at the payment QR code');
-  } else {
-    alert('Enter the recipient address manually or ask Spine Rip to help');
+let scanStream=null, scanTimer=null;
+async function startQRScanner() {
+  const overlay=document.getElementById('scanOverlay');
+  const video=document.getElementById('scanVideo');
+  overlay.classList.add('open');
+  try{
+    scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    video.srcObject=scanStream;
+    await video.play();
+    const detector=('BarcodeDetector' in window)? new BarcodeDetector({formats:['qr_code']}) : null;
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+    async function tick(){
+      if(!overlay.classList.contains('open')) return;
+      canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+      ctx.drawImage(video,0,0,canvas.width,canvas.height);
+      if(detector){
+        try{
+          const codes=await detector.detect(canvas);
+          if(codes && codes.length){ onQRDetected(codes[0].rawValue); return; }
+        }catch{}
+      }
+      scanTimer=requestAnimationFrame(tick);
+    }
+    scanTimer=requestAnimationFrame(tick);
+  }catch(e){
+    alert('Camera unavailable. Grant permission or use the device browser camera.');
+    stopQRScanner();
   }
+}
+function stopQRScanner(){
+  document.getElementById('scanOverlay').classList.remove('open');
+  if(scanTimer){ cancelAnimationFrame(scanTimer); scanTimer=null; }
+  if(scanStream){ scanStream.getTracks().forEach(t=>t.stop()); scanStream=null; }
+}
+function onQRDetected(text){
+  stopQRScanner();
+  // Handle SubZero scheme or external links
+  if(text.startsWith('subzero:pay')){
+    const q=new URLSearchParams(text.split('?')[1]||'');
+    const amt=parseFloat(q.get('amount')||'0');
+    const route=q.get('route')||'cashapp';
+    if(route==='cashapp'){
+      const tag=q.get('cashapp')||feeConfig.owner_cashapp||''; const t=tag.replace('$','');
+      const url='https://cash.app/'+t+'/'+amt.toFixed(2);
+      if(confirm('Pay $'+amt.toFixed(2)+' via Cash App?')) window.open(url,'_blank');
+    }else if(route==='venmo'){
+      const user=(q.get('venmo')||feeConfig.owner_venmo||'').replace('@','');
+      const url='https://venmo.com/'+user+'?txn=pay&amount='+amt.toFixed(2)+'&note='+encodeURIComponent(q.get('note')||'SubZero Payment');
+      if(confirm('Pay $'+amt.toFixed(2)+' via Venmo?')) window.open(url,'_blank');
+    }else{
+      const addr=q.get('addr')||getPayAddr();
+      document.getElementById('payAmount').value=amt.toFixed(2);
+      updateFeeDisplay();
+      showPayQR('receive');
+      alert('Crypto payment requested. Address copied to QR section.');
+    }
+    return;
+  }
+  if(text.includes('cash.app/')){
+    if(confirm('Open Cash App to pay?')) window.open(text,'_blank');
+    return;
+  }
+  if(text.includes('venmo.com/')){
+    if(confirm('Open Venmo to pay?')) window.open(text,'_blank');
+    return;
+  }
+  // Fallback: show raw content
+  alert('Scanned: '+text);
 }
 
 // ══════════════════════════════════════════════
