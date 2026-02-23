@@ -608,6 +608,92 @@ body {
 .szpay-tx .spt-amount { font-size:14px;font-weight:700; }
 .szpay-tx .spt-amount.sent { color:var(--red); }
 .szpay-tx .spt-amount.received { color:var(--green); }
+/* ── CONTACTS SCREEN ─────────────────────── */
+.contacts-body { flex:1;overflow-y:auto;padding:0; }
+.contacts-toolbar {
+  display:flex;gap:8px;padding:10px 12px;background:var(--bg2);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:5;
+}
+.contacts-toolbar input {
+  flex:1;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:20px;padding:8px 16px;font-size:14px;outline:none;
+}
+.contacts-toolbar input:focus { border-color:var(--accent); }
+.contacts-toolbar button {
+  background:var(--accent);color:#000;border:none;border-radius:20px;
+  padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;
+}
+.contacts-toolbar button:active { background:#04f0d8; }
+.contact-section-header {
+  padding:6px 16px;background:var(--bg3);font-size:12px;font-weight:700;color:var(--accent);
+  text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);
+}
+.contact-item {
+  display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;
+  border-bottom:1px solid var(--border);
+}
+.contact-item:active { background:var(--bg4); }
+.contact-avatar {
+  width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.contact-info { flex:1;min-width:0; }
+.contact-name { font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.contact-detail { font-size:12px;color:var(--fg-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.contact-actions { display:flex;gap:6px; }
+.contact-action-btn {
+  width:36px;height:36px;border:1px solid var(--border);border-radius:50%;
+  background:var(--bg3);color:var(--fg);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.contact-action-btn:active { background:var(--bg4); }
+.contact-action-btn.pay { border-color:var(--accent);color:var(--accent); }
+.contact-empty {
+  text-align:center;padding:40px 20px;color:var(--fg-dim);
+}
+.contact-empty .ce-icon { font-size:56px;margin-bottom:12px; }
+.contact-empty .ce-title { font-size:16px;font-weight:600;color:var(--fg);margin-bottom:6px; }
+.contact-empty .ce-sub { font-size:13px; }
+.contact-stats {
+  display:flex;gap:8px;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border);
+}
+.contact-stat {
+  flex:1;text-align:center;background:var(--bg3);border-radius:10px;padding:10px 8px;
+}
+.contact-stat .cs-val { font-size:20px;font-weight:800;color:var(--accent); }
+.contact-stat .cs-label { font-size:10px;color:var(--fg-dim);margin-top:2px; }
+/* Contact modal */
+.contact-modal {
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;
+  align-items:center;justify-content:center;padding:20px;
+}
+.contact-modal.open { display:flex; }
+.contact-modal-box {
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:20px;width:100%;max-width:360px;
+}
+.contact-modal-box h3 { font-size:16px;margin-bottom:14px;color:var(--accent); }
+.contact-modal-box label { font-size:11px;color:var(--fg-dim);display:block;margin-bottom:3px;font-weight:600; }
+.contact-modal-box input {
+  width:100%;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;font-size:14px;outline:none;margin-bottom:10px;
+}
+.contact-modal-box input:focus { border-color:var(--accent); }
+.cm-btns { display:flex;gap:8px;margin-top:6px; }
+.cm-btn {
+  flex:1;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;
+}
+.cm-btn.primary { background:var(--accent);color:#000; }
+.cm-btn.cancel { background:var(--bg4);color:var(--fg); }
+.cm-btn.danger { background:var(--red);color:#fff; }
+.contacts-footer {
+  padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;
+}
+.contacts-footer button {
+  flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;
+  background:var(--bg3);color:var(--fg);font-size:12px;font-weight:600;cursor:pointer;
+}
+.contacts-footer button:active { background:var(--bg4); }
 /* ── INSTRUCTIONS SCREEN ─────────────────── */
 .instructions-body { flex:1;overflow-y:auto;padding:20px; }
 .inst-step {
@@ -682,6 +768,7 @@ body {
   <div class="drawer-items">
     <div class="drawer-item" onclick="showScreen('chat');closeDrawer()"><span class="di-icon">💬</span>Spine Rip Chat</div>
     <div class="drawer-item" onclick="showScreen('szpay');closeDrawer()"><span class="di-icon">💸</span>SubZero Pay</div>
+    <div class="drawer-item" onclick="showScreen('contacts');closeDrawer()"><span class="di-icon">👥</span>Contacts</div>
     <div class="drawer-item" onclick="showScreen('wallet');closeDrawer()"><span class="di-icon">💰</span>Crypto Wallet</div>
     <div class="drawer-item" onclick="showScreen('share');closeDrawer()"><span class="di-icon">📥</span>Download Desktop</div>
     <div class="drawer-item" onclick="showScreen('instructions');closeDrawer()"><span class="di-icon">📖</span>Instructions</div>
@@ -742,6 +829,16 @@ body {
           <span class="cc-time">P2P</span>
         </div>
         <div class="cc-preview">Send & receive payments via QR code</div>
+      </div>
+    </div>
+    <div class="chat-card" onclick="showScreen('contacts')">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#bb86fc,#7c4dff);display:flex;align-items:center;justify-content:center;font-size:24px;">👥</div>
+      <div class="cc-info">
+        <div class="cc-top">
+          <span class="cc-name">Contacts</span>
+          <span class="cc-time" id="contactCount">0</span>
+        </div>
+        <div class="cc-preview">Import, manage & pay your contacts</div>
       </div>
     </div>
   </div>
@@ -872,6 +969,62 @@ body {
     </div>
   </div>
 </div>
+
+<!-- ═══════ CONTACTS SCREEN ═══════ -->
+<div class="screen" id="screen-contacts">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">Contacts</div><div class="status" id="contactStatusBar">0 contacts</div></div>
+    <button class="hbtn" onclick="openAddContact()">＋</button>
+  </div>
+  <div class="contacts-body">
+    <div class="contacts-toolbar">
+      <input type="text" id="contactSearchInput" placeholder="Search contacts..." oninput="filterContacts()">
+      <button onclick="importPhoneContacts()">📱 Import</button>
+    </div>
+    <div class="contact-stats">
+      <div class="contact-stat"><div class="cs-val" id="csTotal">0</div><div class="cs-label">Total</div></div>
+      <div class="contact-stat"><div class="cs-val" id="csPhone">0</div><div class="cs-label">Phone</div></div>
+      <div class="contact-stat"><div class="cs-val" id="csEmail">0</div><div class="cs-label">Email</div></div>
+    </div>
+    <div id="contactListContainer">
+      <div class="contact-empty">
+        <div class="ce-icon">👥</div>
+        <div class="ce-title">No contacts yet</div>
+        <div class="ce-sub">Import from your phone or add manually</div>
+      </div>
+    </div>
+    <div class="contacts-footer">
+      <button onclick="exportContacts()">📤 Export Backup</button>
+      <button onclick="importContactsFile()">📥 Import Backup</button>
+    </div>
+  </div>
+</div>
+
+<!-- Contact Add/Edit Modal -->
+<div class="contact-modal" id="contactModal">
+  <div class="contact-modal-box">
+    <h3 id="cmTitle">Add Contact</h3>
+    <label>Full Name *</label>
+    <input type="text" id="cmName" placeholder="John Doe">
+    <label>Phone Number</label>
+    <input type="tel" id="cmPhone" placeholder="+1 (555) 123-4567">
+    <label>Email</label>
+    <input type="email" id="cmEmail" placeholder="john@example.com">
+    <label>$Cashtag / Venmo / Payment Handle</label>
+    <input type="text" id="cmPayHandle" placeholder="$JohnDoe or @johndoe">
+    <label>Notes</label>
+    <input type="text" id="cmNotes" placeholder="Optional notes...">
+    <div class="cm-btns">
+      <button class="cm-btn cancel" onclick="closeContactModal()">Cancel</button>
+      <button class="cm-btn danger" id="cmDeleteBtn" onclick="deleteContact()" style="display:none">Delete</button>
+      <button class="cm-btn primary" onclick="saveContact()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden file input for importing contacts -->
+<input type="file" id="contactFileInput" accept=".json" style="display:none" onchange="handleContactFileImport(event)">
 
 <!-- ═══════ CHAT SCREEN ═══════ -->
 <div class="screen" id="screen-chat">
@@ -1495,6 +1648,266 @@ function renderSZPTx() {
   }).join('');
 }
 renderSZPTx();
+
+// ══════════════════════════════════════════════
+//  CONTACTS
+// ══════════════════════════════════════════════
+let szContacts = JSON.parse(localStorage.getItem('sz_contacts') || '[]');
+let editingContactIdx = -1;
+
+const avatarColors = ['#e91e63','#9c27b0','#673ab7','#3f51b5','#2196f3','#009688','#4caf50','#ff9800','#ff5722','#795548'];
+function getAvatarColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return avatarColors[Math.abs(hash) % avatarColors.length];
+}
+function getInitials(name) {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  return name.substring(0, 2).toUpperCase();
+}
+
+function saveContacts() {
+  localStorage.setItem('sz_contacts', JSON.stringify(szContacts));
+  renderContacts();
+  updateContactStats();
+}
+
+function updateContactStats() {
+  const total = szContacts.length;
+  const withPhone = szContacts.filter(c => c.phone).length;
+  const withEmail = szContacts.filter(c => c.email).length;
+  document.getElementById('csTotal').textContent = total;
+  document.getElementById('csPhone').textContent = withPhone;
+  document.getElementById('csEmail').textContent = withEmail;
+  document.getElementById('contactStatusBar').textContent = total + ' contact' + (total !== 1 ? 's' : '');
+  const countEl = document.getElementById('contactCount');
+  if (countEl) countEl.textContent = total;
+}
+
+function renderContacts(filter) {
+  const container = document.getElementById('contactListContainer');
+  let list = [...szContacts];
+
+  if (filter) {
+    const q = filter.toLowerCase();
+    list = list.filter(c =>
+      (c.name || '').toLowerCase().includes(q) ||
+      (c.phone || '').includes(q) ||
+      (c.email || '').toLowerCase().includes(q) ||
+      (c.payHandle || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (!list.length) {
+    container.innerHTML = `<div class="contact-empty">
+      <div class="ce-icon">${filter ? '🔍' : '👥'}</div>
+      <div class="ce-title">${filter ? 'No matches' : 'No contacts yet'}</div>
+      <div class="ce-sub">${filter ? 'Try a different search' : 'Import from your phone or add manually'}</div>
+    </div>`;
+    return;
+  }
+
+  // Sort alphabetically
+  list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+  // Group by first letter
+  let html = '';
+  let currentLetter = '';
+  list.forEach(c => {
+    const idx = szContacts.indexOf(c);
+    const letter = (c.name || '?')[0].toUpperCase();
+    if (letter !== currentLetter) {
+      currentLetter = letter;
+      html += `<div class="contact-section-header">${letter}</div>`;
+    }
+    const color = getAvatarColor(c.name || 'X');
+    const initials = getInitials(c.name || '??');
+    const detail = c.phone || c.email || c.payHandle || 'No details';
+    html += `<div class="contact-item" onclick="openEditContact(${idx})">
+      <div class="contact-avatar" style="background:${color}">${initials}</div>
+      <div class="contact-info">
+        <div class="contact-name">${escHtml(c.name)}</div>
+        <div class="contact-detail">${escHtml(detail)}</div>
+      </div>
+      <div class="contact-actions">
+        ${c.phone ? `<button class="contact-action-btn" onclick="event.stopPropagation();callContact(${idx})" title="Call">📞</button>` : ''}
+        <button class="contact-action-btn pay" onclick="event.stopPropagation();payContact(${idx})" title="Pay">💸</button>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function filterContacts() {
+  const q = document.getElementById('contactSearchInput').value.trim();
+  renderContacts(q || undefined);
+}
+
+// ── Contact Picker API (import from phone) ──
+async function importPhoneContacts() {
+  if (!('contacts' in navigator && 'ContactsManager' in window)) {
+    alert('Contact Picker API is not supported on this device/browser.\n\nTry using Chrome on Android, or add contacts manually.');
+    return;
+  }
+  try {
+    const props = await navigator.contacts.getProperties();
+    const supported = props.filter(p => ['name','tel','email'].includes(p));
+    const results = await navigator.contacts.select(supported, { multiple: true });
+    if (!results || !results.length) return;
+
+    let added = 0;
+    results.forEach(r => {
+      const name = (r.name && r.name[0]) || 'Unknown';
+      const phone = (r.tel && r.tel[0]) || '';
+      const email = (r.email && r.email[0]) || '';
+      // Skip duplicates (same name + phone)
+      const exists = szContacts.some(c => c.name === name && c.phone === phone);
+      if (!exists) {
+        szContacts.push({ name, phone, email, payHandle: '', notes: '', source: 'phone', addedAt: Date.now() });
+        added++;
+      }
+    });
+    saveContacts();
+    alert('✅ Imported ' + added + ' new contact' + (added !== 1 ? 's' : '') + ' from your phone!');
+  } catch (err) {
+    if (err.name !== 'TypeError') console.error(err);
+    alert('Could not import contacts. Make sure you\'re using Chrome on Android.');
+  }
+}
+
+// ── Add / Edit / Delete ──
+function openAddContact() {
+  editingContactIdx = -1;
+  document.getElementById('cmTitle').textContent = 'Add Contact';
+  document.getElementById('cmName').value = '';
+  document.getElementById('cmPhone').value = '';
+  document.getElementById('cmEmail').value = '';
+  document.getElementById('cmPayHandle').value = '';
+  document.getElementById('cmNotes').value = '';
+  document.getElementById('cmDeleteBtn').style.display = 'none';
+  document.getElementById('contactModal').classList.add('open');
+}
+
+function openEditContact(idx) {
+  editingContactIdx = idx;
+  const c = szContacts[idx];
+  document.getElementById('cmTitle').textContent = 'Edit Contact';
+  document.getElementById('cmName').value = c.name || '';
+  document.getElementById('cmPhone').value = c.phone || '';
+  document.getElementById('cmEmail').value = c.email || '';
+  document.getElementById('cmPayHandle').value = c.payHandle || '';
+  document.getElementById('cmNotes').value = c.notes || '';
+  document.getElementById('cmDeleteBtn').style.display = '';
+  document.getElementById('contactModal').classList.add('open');
+}
+
+function closeContactModal() {
+  document.getElementById('contactModal').classList.remove('open');
+  editingContactIdx = -1;
+}
+
+function saveContact() {
+  const name = document.getElementById('cmName').value.trim();
+  if (!name) { alert('Name is required'); return; }
+  const data = {
+    name,
+    phone: document.getElementById('cmPhone').value.trim(),
+    email: document.getElementById('cmEmail').value.trim(),
+    payHandle: document.getElementById('cmPayHandle').value.trim(),
+    notes: document.getElementById('cmNotes').value.trim(),
+    addedAt: Date.now()
+  };
+  if (editingContactIdx >= 0) {
+    data.source = szContacts[editingContactIdx].source || 'manual';
+    szContacts[editingContactIdx] = data;
+  } else {
+    data.source = 'manual';
+    szContacts.push(data);
+  }
+  saveContacts();
+  closeContactModal();
+}
+
+function deleteContact() {
+  if (editingContactIdx < 0) return;
+  const c = szContacts[editingContactIdx];
+  if (confirm('Delete ' + c.name + '?')) {
+    szContacts.splice(editingContactIdx, 1);
+    saveContacts();
+    closeContactModal();
+  }
+}
+
+// ── Actions ──
+function callContact(idx) {
+  const c = szContacts[idx];
+  if (c.phone) window.open('tel:' + c.phone.replace(/[^\d+]/g, ''));
+}
+
+function payContact(idx) {
+  const c = szContacts[idx];
+  // Switch to SubZero Pay and pre-fill note
+  showScreen('szpay');
+  setSZPayMode('request');
+  const noteEl = document.getElementById('szpNote');
+  if (noteEl) noteEl.value = 'Payment to ' + c.name + (c.payHandle ? ' (' + c.payHandle + ')' : '');
+}
+
+// ── Export / Import backup ──
+function exportContacts() {
+  if (!szContacts.length) { alert('No contacts to export'); return; }
+  const blob = new Blob([JSON.stringify(szContacts, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'subzero-contacts-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importContactsFile() {
+  document.getElementById('contactFileInput').click();
+}
+
+function handleContactFileImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) { alert('Invalid contacts file'); return; }
+      let added = 0;
+      imported.forEach(c => {
+        if (!c.name) return;
+        const exists = szContacts.some(x => x.name === c.name && x.phone === c.phone);
+        if (!exists) {
+          szContacts.push({
+            name: c.name || 'Unknown',
+            phone: c.phone || '',
+            email: c.email || '',
+            payHandle: c.payHandle || '',
+            notes: c.notes || '',
+            source: 'import',
+            addedAt: Date.now()
+          });
+          added++;
+        }
+      });
+      saveContacts();
+      alert('✅ Imported ' + added + ' contact' + (added !== 1 ? 's' : '') + ' from backup!');
+    } catch (err) {
+      alert('Failed to parse contacts file');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // Reset input
+}
+
+// Init contacts on load
+renderContacts();
+updateContactStats();
 
 // ══════════════════════════════════════════════
 //  STATE
