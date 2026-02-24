@@ -885,6 +885,47 @@ body {
   box-shadow:0 4px 16px rgba(3,218,198,.4);z-index:10;
 }
 .email-fab:active { transform:scale(.95); }
+/* ── NOTIFICATION CENTER ──────────────── */
+.notif-bell { position:relative;background:none;border:none;font-size:20px;cursor:pointer;padding:4px; }
+.notif-bell .nb-badge {
+  position:absolute;top:-2px;right:-4px;background:var(--red);color:#fff;font-size:9px;
+  font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;
+  align-items:center;justify-content:center;padding:0 4px;
+}
+.notif-bell .nb-badge.hidden { display:none; }
+.notif-body { flex:1;overflow-y:auto; }
+.notif-header-bar {
+  display:flex;align-items:center;justify-content:space-between;padding:10px 16px;
+  border-bottom:1px solid var(--border);background:var(--bg2);
+}
+.notif-header-bar .nh-title { font-size:14px;font-weight:700; }
+.notif-header-bar button {
+  background:none;border:1px solid var(--border);color:var(--fg-dim);border-radius:8px;
+  padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;
+}
+.notif-header-bar button:active { background:var(--bg4); }
+.notif-item {
+  display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .15s;
+}
+.notif-item:active { background:var(--bg3); }
+.notif-item.unread { background:rgba(3,218,198,.05); }
+.notif-item .ni-icon {
+  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.notif-item .ni-content { flex:1;min-width:0; }
+.notif-item .ni-title { font-size:14px;font-weight:600;margin-bottom:2px; }
+.notif-item.unread .ni-title { font-weight:800; }
+.notif-item .ni-desc { font-size:12px;color:var(--fg-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.notif-item .ni-time { font-size:11px;color:var(--fg-dim);flex-shrink:0;margin-top:2px; }
+.notif-empty {
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+.notif-empty .ne-icon { font-size:48px;margin-bottom:12px; }
+.notif-empty .ne-title { font-size:16px;font-weight:700;margin-bottom:4px; }
+.notif-empty .ne-sub { font-size:13px;color:var(--fg-dim); }
 /* ── LOCK SCREEN ──────────────────────── */
 #lockScreen {
   position:fixed;inset:0;z-index:9999;background:var(--bg);
@@ -1075,6 +1116,7 @@ body {
   <div class="home-header">
     <button class="hamburger" onclick="openDrawer()">☰</button>
     <div class="title">SubZero</div>
+    <button class="notif-bell" onclick="showScreen('notifications')">🔔<span class="nb-badge hidden" id="notifBadge">0</span></button>
     <button class="search-btn" onclick="toggleSearch()">🔍</button>
   </div>
   <div class="search-bar" id="homeSearch">
@@ -1364,6 +1406,28 @@ body {
     <div id="szmailHistory" style="display:none">
       <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px;">📨 Transfer History</div>
       <div id="szmailTxList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ NOTIFICATION CENTER ═══════ -->
+<div class="screen" id="screen-notifications">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">Notifications</div><div class="status" id="notifStatusBar">All caught up</div></div>
+  </div>
+  <div class="notif-header-bar">
+    <div class="nh-title">🔔 Activity</div>
+    <button onclick="markAllNotifsRead()">Mark All Read</button>
+    <button onclick="clearAllNotifs()">Clear All</button>
+  </div>
+  <div class="notif-body">
+    <div id="notifListContainer">
+      <div class="notif-empty">
+        <div class="ne-icon">🔕</div>
+        <div class="ne-title">No notifications</div>
+        <div class="ne-sub">You're all caught up!</div>
+      </div>
     </div>
   </div>
 </div>
@@ -2314,6 +2378,11 @@ function addSZPTx(type, amount, fee, route, note) {
   if (szpTxHistory.length > 50) szpTxHistory = szpTxHistory.slice(0, 50);
   localStorage.setItem('szp_tx', JSON.stringify(szpTxHistory));
   renderSZPTx();
+  // Notification
+  if (typeof addNotif === 'function') {
+    const icon = type === 'requested' ? '📲' : '✅';
+    addNotif(icon, type === 'requested' ? 'Payment Requested' : 'Payment Sent', '$' + parseFloat(amount).toFixed(2) + ' via ' + route + (note ? ' — ' + note : ''), 'screen:szpay');
+  }
 }
 
 function renderSZPTx() {
@@ -2465,6 +2534,10 @@ function sendCoinToEmail() {
 
   document.getElementById('szmSendQRImg').src = qrUrl;
   document.getElementById('szmSendResult').style.display = '';
+  // Notification
+  if (typeof addNotif === 'function') {
+    addNotif('🪙', 'Stablecoin Transfer', '$' + f.total.toFixed(2) + ' ' + coin + ' to ' + to, 'screen:szmail');
+  }
 
   // Record fee income to dashboard
   recordFeeToServer('SubZero Mail', Math.round(f.amount * 100), coin + ' transfer to ' + to);
@@ -2752,6 +2825,10 @@ function saveContact() {
   }
   saveContacts();
   closeContactModal();
+  // Notification
+  if (typeof addNotif === 'function') {
+    addNotif('👥', editingContactIdx >= 0 ? 'Contact Updated' : 'Contact Added', name, 'screen:contacts');
+  }
 }
 
 function deleteContact() {
@@ -2860,6 +2937,7 @@ function showScreen(name) {
     checkStatus();
   }
   if (name === 'income') loadIncome();
+  if (name === 'notifications') renderNotifs();
   closeMenus();
 }
 
@@ -4200,6 +4278,10 @@ function sendEmail() {
   document.getElementById('emailCompose').classList.remove('open');
   emailEditDraftId = null;
   switchEmailFolder('sent');
+  // Notification
+  if (typeof addNotif === 'function') {
+    addNotif('📨', 'Email Sent', 'To: ' + to + (subject ? ' — ' + subject : ''), 'screen:emailclient');
+  }
 }
 
 // ── Reply / Forward ──
@@ -4234,6 +4316,125 @@ function initEmailClient() {
   seedWelcomeEmail();
   renderEmailList();
   updateEmailBadges();
+}
+
+// ══════════════════════════════════════════════
+//  NOTIFICATION CENTER
+// ══════════════════════════════════════════════
+const NOTIFS_KEY = 'sz_notifs';
+
+function getNotifs() { return JSON.parse(localStorage.getItem(NOTIFS_KEY) || '[]'); }
+function saveNotifs(arr) { localStorage.setItem(NOTIFS_KEY, JSON.stringify(arr)); }
+
+function addNotif(icon, title, desc, action) {
+  const notifs = getNotifs();
+  notifs.unshift({
+    id: 'n-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+    icon: icon,
+    title: title,
+    desc: desc || '',
+    action: action || null,  // e.g. 'screen:emailclient' or 'screen:szpay'
+    ts: Date.now(),
+    read: false
+  });
+  if (notifs.length > 100) notifs.length = 100;
+  saveNotifs(notifs);
+  updateNotifBadge();
+}
+
+function updateNotifBadge() {
+  const notifs = getNotifs();
+  const unread = notifs.filter(n => !n.read).length;
+  const badge = document.getElementById('notifBadge');
+  if (!badge) return;
+  if (unread > 0) {
+    badge.textContent = unread > 99 ? '99+' : unread;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+  const status = document.getElementById('notifStatusBar');
+  if (status) status.textContent = unread > 0 ? unread + ' unread' : 'All caught up';
+}
+
+function notifTimeFormat(ts) {
+  const d = new Date(ts);
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 60000) return 'Just now';
+  if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+  if (diff < 86400000 && d.getDate() === now.getDate()) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  if (diff < 604800000) return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+  return (d.getMonth()+1) + '/' + d.getDate();
+}
+
+const notifIconBgs = {
+  '💸': '#00b894', '📧': '#0077b6', '📨': '#7c4dff', '👥': '#bb86fc',
+  '💰': '#f7931a', '🔒': '#03dac6', '📲': '#4e8ef7', '✅': '#00b894',
+  '🚀': '#e040fb', '🔔': '#ff6b00', '🪙': '#03dac6', '⚠️': '#e65750'
+};
+
+function renderNotifs() {
+  const notifs = getNotifs();
+  const container = document.getElementById('notifListContainer');
+  if (!notifs.length) {
+    container.innerHTML = '<div class="notif-empty"><div class="ne-icon">🔕</div><div class="ne-title">No notifications</div><div class="ne-sub">You\'re all caught up!</div></div>';
+    return;
+  }
+  container.innerHTML = notifs.map(n => {
+    const bg = notifIconBgs[n.icon] || '#4e8ef7';
+    const unread = !n.read ? 'unread' : '';
+    return `<div class="notif-item ${unread}" onclick="openNotif('${n.id}')">
+      <div class="ni-icon" style="background:${bg}">${n.icon}</div>
+      <div class="ni-content">
+        <div class="ni-title">${n.title}</div>
+        <div class="ni-desc">${n.desc}</div>
+      </div>
+      <div class="ni-time">${notifTimeFormat(n.ts)}</div>
+    </div>`;
+  }).join('');
+}
+
+function openNotif(id) {
+  const notifs = getNotifs();
+  const notif = notifs.find(n => n.id === id);
+  if (!notif) return;
+  notif.read = true;
+  saveNotifs(notifs);
+  updateNotifBadge();
+  renderNotifs();
+  // Navigate to action if set
+  if (notif.action && notif.action.startsWith('screen:')) {
+    showScreen(notif.action.replace('screen:', ''));
+  }
+}
+
+function markAllNotifsRead() {
+  const notifs = getNotifs();
+  notifs.forEach(n => n.read = true);
+  saveNotifs(notifs);
+  updateNotifBadge();
+  renderNotifs();
+}
+
+function clearAllNotifs() {
+  if (!getNotifs().length) return;
+  if (confirm('Clear all notifications?')) {
+    saveNotifs([]);
+    updateNotifBadge();
+    renderNotifs();
+  }
+}
+
+function initNotifications() {
+  updateNotifBadge();
+  // Seed a welcome notification if first run
+  const notifs = getNotifs();
+  if (!notifs.length && !localStorage.getItem('sz_notif_seeded')) {
+    addNotif('👋', 'Welcome to SubZero!', 'Tap to explore all features', 'screen:home');
+    addNotif('📨', 'New email from SubZero Team', 'Check your inbox for a welcome message', 'screen:emailclient');
+    localStorage.setItem('sz_notif_seeded', '1');
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -4285,6 +4486,7 @@ checkStatus();
 initLockSettings();
 initLockScreen();
 initEmailClient();
+initNotifications();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
