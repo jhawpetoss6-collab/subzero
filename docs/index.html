@@ -760,6 +760,131 @@ body {
 .szmail-tx .smt-amount { font-size:14px;font-weight:700; }
 .szmail-tx .smt-amount.sent { color:var(--red); }
 .szmail-tx .smt-amount.received { color:var(--green); }
+/* ── EMAIL CLIENT ────────────────────── */
+.email-body { flex:1;overflow-y:auto;display:flex;flex-direction:column; }
+.email-tabs { display:flex;border-bottom:1px solid var(--border);background:var(--bg2); }
+.email-tab {
+  flex:1;padding:12px 8px;text-align:center;font-size:12px;font-weight:700;
+  color:var(--fg-dim);cursor:pointer;border-bottom:2px solid transparent;transition:.2s;
+}
+.email-tab.active { color:var(--accent);border-bottom-color:var(--accent); }
+.email-tab .et-badge {
+  display:inline-block;background:var(--accent);color:#000;border-radius:10px;
+  font-size:10px;font-weight:800;padding:1px 6px;margin-left:4px;min-width:16px;
+}
+.email-toolbar {
+  display:flex;gap:8px;padding:10px 14px;background:var(--bg2);border-bottom:1px solid var(--border);
+}
+.email-toolbar input {
+  flex:1;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:20px;padding:8px 14px;font-size:13px;outline:none;
+}
+.email-toolbar input:focus { border-color:var(--accent); }
+.email-toolbar button {
+  background:var(--accent);color:#000;border:none;border-radius:10px;
+  padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;
+}
+.email-list { flex:1;overflow-y:auto; }
+.email-item {
+  display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;
+  transition:background .15s;
+}
+.email-item:active { background:var(--bg3); }
+.email-item.unread { background:rgba(3,218,198,.05); }
+.email-item.unread .ei-subject { font-weight:800;color:var(--fg); }
+.email-item .ei-avatar {
+  width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;flex-shrink:0;
+}
+.email-item .ei-content { flex:1;min-width:0; }
+.email-item .ei-top { display:flex;justify-content:space-between;align-items:center;margin-bottom:2px; }
+.email-item .ei-from { font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.email-item .ei-time { font-size:11px;color:var(--fg-dim);flex-shrink:0;margin-left:8px; }
+.email-item .ei-subject { font-size:13px;color:var(--fg-dim);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.email-item .ei-preview { font-size:12px;color:var(--fg-dim);opacity:.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.email-item .ei-dot { width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:6px; }
+.email-empty {
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;text-align:center;
+}
+.email-empty .ee-icon { font-size:48px;margin-bottom:12px; }
+.email-empty .ee-title { font-size:16px;font-weight:700;margin-bottom:4px; }
+.email-empty .ee-sub { font-size:13px;color:var(--fg-dim); }
+/* Compose modal */
+.email-compose {
+  display:none;position:fixed;inset:0;z-index:300;background:var(--bg);
+  flex-direction:column;
+}
+.email-compose.open { display:flex; }
+.email-compose .ec-header {
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  border-bottom:1px solid var(--border);background:var(--bg2);
+}
+.email-compose .ec-header button { background:none;border:none;color:var(--fg);font-size:20px;cursor:pointer; }
+.email-compose .ec-header .ec-title { flex:1;font-size:16px;font-weight:700; }
+.email-compose .ec-send {
+  background:var(--accent);color:#000;border:none;border-radius:10px;
+  padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;
+}
+.email-compose .ec-fields { padding:12px 16px;border-bottom:1px solid var(--border); }
+.email-compose .ec-field {
+  display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.email-compose .ec-field:last-child { border-bottom:none; }
+.email-compose .ec-field label { font-size:13px;color:var(--fg-dim);font-weight:600;width:50px; }
+.email-compose .ec-field input {
+  flex:1;background:transparent;color:var(--fg);border:none;font-size:14px;outline:none;padding:4px 0;
+}
+.email-compose .ec-body {
+  flex:1;padding:16px;
+}
+.email-compose .ec-body textarea {
+  width:100%;height:100%;background:transparent;color:var(--fg);border:none;
+  font-size:14px;line-height:1.6;outline:none;resize:none;font-family:inherit;
+}
+/* Read view */
+.email-read {
+  display:none;position:fixed;inset:0;z-index:280;background:var(--bg);
+  flex-direction:column;
+}
+.email-read.open { display:flex; }
+.email-read .er-header {
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  border-bottom:1px solid var(--border);background:var(--bg2);
+}
+.email-read .er-header button { background:none;border:none;color:var(--fg);font-size:20px;cursor:pointer; }
+.email-read .er-header .er-title { flex:1;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.email-read .er-meta {
+  padding:16px;border-bottom:1px solid var(--border);
+}
+.email-read .er-from-row { display:flex;align-items:center;gap:10px;margin-bottom:6px; }
+.email-read .er-avatar {
+  width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;
+}
+.email-read .er-from { font-size:14px;font-weight:700; }
+.email-read .er-email { font-size:12px;color:var(--fg-dim); }
+.email-read .er-date { font-size:12px;color:var(--fg-dim);margin-left:auto; }
+.email-read .er-subject { font-size:18px;font-weight:800;color:var(--accent);margin-top:8px; }
+.email-read .er-body-content {
+  flex:1;overflow-y:auto;padding:16px;
+  font-size:14px;line-height:1.7;white-space:pre-wrap;
+}
+.email-read .er-actions {
+  display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);background:var(--bg2);
+}
+.email-read .er-actions button {
+  flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;
+  background:var(--bg3);color:var(--fg);font-size:13px;font-weight:600;cursor:pointer;
+}
+.email-read .er-actions button:active { background:var(--bg4); }
+.email-fab {
+  position:absolute;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;
+  background:var(--accent);color:#000;border:none;font-size:24px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 4px 16px rgba(3,218,198,.4);z-index:10;
+}
+.email-fab:active { transform:scale(.95); }
 /* ── LOCK SCREEN ──────────────────────── */
 #lockScreen {
   position:fixed;inset:0;z-index:9999;background:var(--bg);
@@ -924,6 +1049,7 @@ body {
     <div class="drawer-item" onclick="showScreen('szpay');closeDrawer()"><span class="di-icon">💸</span>SubZero Pay</div>
     <div class="drawer-item" onclick="showScreen('contacts');closeDrawer()"><span class="di-icon">👥</span>Contacts</div>
     <div class="drawer-item" onclick="showScreen('szmail');closeDrawer()"><span class="di-icon">📧</span>SubZero Mail</div>
+    <div class="drawer-item" onclick="showScreen('emailclient');closeDrawer()"><span class="di-icon">📨</span>SubZero Email</div>
     <div class="drawer-item" onclick="showScreen('wallet');closeDrawer()"><span class="di-icon">💰</span>Crypto Wallet</div>
     <div class="drawer-item" onclick="showScreen('share');closeDrawer()"><span class="di-icon">📥</span>Download Desktop</div>
     <div class="drawer-item" onclick="showScreen('instructions');closeDrawer()"><span class="di-icon">📖</span>Instructions</div>
@@ -994,6 +1120,16 @@ body {
           <span class="cc-time">QR</span>
         </div>
         <div class="cc-preview">Email QR codes & stablecoin transfers</div>
+      </div>
+    </div>
+    <div class="chat-card" onclick="showScreen('emailclient')">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e040fb,#7c4dff);display:flex;align-items:center;justify-content:center;font-size:24px;">📨</div>
+      <div class="cc-info">
+        <div class="cc-top">
+          <span class="cc-name">SubZero Email</span>
+          <span class="cc-time" id="emailUnreadCount">0</span>
+        </div>
+        <div class="cc-preview">Full inbox, compose & send emails</div>
       </div>
     </div>
     <div class="chat-card" onclick="showScreen('contacts')">
@@ -1229,6 +1365,77 @@ body {
       <div style="font-size:14px;font-weight:700;color:var(--accent);margin-bottom:8px;">📨 Transfer History</div>
       <div id="szmailTxList"></div>
     </div>
+  </div>
+</div>
+
+<!-- ═══════ EMAIL CLIENT SCREEN ═══════ -->
+<div class="screen" id="screen-emailclient">
+  <div class="header">
+    <button class="back" onclick="showScreen('home')">←</button>
+    <div class="info"><div class="name">SubZero Email</div><div class="status" id="emailStatusBar">Inbox</div></div>
+    <button class="hbtn" onclick="refreshEmailClient()">🔄</button>
+  </div>
+  <div class="email-tabs">
+    <div class="email-tab active" id="etInbox" onclick="switchEmailFolder('inbox')">📥 Inbox<span class="et-badge" id="etInboxBadge" style="display:none">0</span></div>
+    <div class="email-tab" id="etSent" onclick="switchEmailFolder('sent')">📤 Sent</div>
+    <div class="email-tab" id="etDrafts" onclick="switchEmailFolder('drafts')">📝 Drafts</div>
+    <div class="email-tab" id="etTrash" onclick="switchEmailFolder('trash')">🗑️ Trash</div>
+  </div>
+  <div class="email-toolbar">
+    <input type="text" id="emailSearchInput" placeholder="Search emails..." oninput="filterEmails()">
+  </div>
+  <div class="email-body">
+    <div class="email-list" id="emailListContainer">
+      <div class="email-empty">
+        <div class="ee-icon">📭</div>
+        <div class="ee-title">No emails yet</div>
+        <div class="ee-sub">Compose your first email or connect a mail provider</div>
+      </div>
+    </div>
+    <button class="email-fab" onclick="openEmailCompose()">✏️</button>
+  </div>
+</div>
+
+<!-- Email Compose Overlay -->
+<div class="email-compose" id="emailCompose">
+  <div class="ec-header">
+    <button onclick="closeEmailCompose()">←</button>
+    <div class="ec-title" id="ecTitle">New Email</div>
+    <button class="ec-send" id="ecDraftBtn" onclick="saveEmailDraft()" style="margin-right:4px">💾 Draft</button>
+    <button class="ec-send" onclick="sendEmail()">Send ➤</button>
+  </div>
+  <div class="ec-fields">
+    <div class="ec-field"><label>To:</label><input type="email" id="ecTo" placeholder="recipient@email.com"></div>
+    <div class="ec-field"><label>Subject:</label><input type="text" id="ecSubject" placeholder="Subject"></div>
+  </div>
+  <div class="ec-body">
+    <textarea id="ecBody" placeholder="Write your message..."></textarea>
+  </div>
+</div>
+
+<!-- Email Read Overlay -->
+<div class="email-read" id="emailRead">
+  <div class="er-header">
+    <button onclick="closeEmailRead()">←</button>
+    <div class="er-title" id="erTitle">Email Subject</div>
+    <button onclick="deleteReadEmail()" style="color:var(--red)">🗑️</button>
+  </div>
+  <div class="er-meta">
+    <div class="er-from-row">
+      <div class="er-avatar" id="erAvatar" style="background:#7c4dff">S</div>
+      <div>
+        <div class="er-from" id="erFrom">Sender Name</div>
+        <div class="er-email" id="erEmail">sender@email.com</div>
+      </div>
+      <div class="er-date" id="erDate">Today</div>
+    </div>
+    <div class="er-subject" id="erSubject">Email Subject</div>
+  </div>
+  <div class="er-body-content" id="erBody">Email body goes here...</div>
+  <div class="er-actions">
+    <button onclick="replyToEmail()">↩️ Reply</button>
+    <button onclick="forwardEmail()">↗️ Forward</button>
+    <button onclick="deleteReadEmail()">🗑️ Delete</button>
   </div>
 </div>
 
@@ -3716,6 +3923,320 @@ async function loadIncome() {
 loadIncome();
 
 // ══════════════════════════════════════════════
+//  SUBZERO EMAIL CLIENT
+// ══════════════════════════════════════════════
+let emailFolder = 'inbox';
+let emailCurrentId = null;  // for read view
+let emailEditDraftId = null; // for editing drafts
+const EMAILS_KEY = 'sz_emails';
+
+function getEmails() { return JSON.parse(localStorage.getItem(EMAILS_KEY) || '[]'); }
+function saveEmails(arr) { localStorage.setItem(EMAILS_KEY, JSON.stringify(arr)); }
+
+// Seed welcome email on first run
+function seedWelcomeEmail() {
+  const emails = getEmails();
+  if (emails.length > 0) return;
+  const welcome = {
+    id: 'welcome-' + Date.now(),
+    folder: 'inbox',
+    from: 'SubZero Team',
+    fromEmail: 'team@subzero.app',
+    to: 'you',
+    subject: 'Welcome to SubZero Email 👋',
+    body: 'Hey there!\n\nWelcome to SubZero Email — your in-app email client.\n\nHere\'s what you can do:\n• Compose and send emails\n• Save drafts for later\n• Organize with Inbox, Sent, Drafts & Trash folders\n• Search through all your emails\n\nRight now, emails are stored locally on your device. Once you connect a domain and mail provider (like Zoho Mail), your emails will sync with a real mail server for full send/receive.\n\nFlawless Victory,\nThe SubZero Team',
+    ts: Date.now(),
+    read: false
+  };
+  saveEmails([welcome]);
+}
+
+function emailTimeFormat(ts) {
+  const d = new Date(ts);
+  const now = new Date();
+  const diff = now - d;
+  if (diff < 86400000 && d.getDate() === now.getDate()) {
+    return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+  if (diff < 604800000) {
+    return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+  }
+  return (d.getMonth()+1) + '/' + d.getDate() + '/' + (d.getFullYear() % 100);
+}
+
+const avatarColors = ['#e040fb','#7c4dff','#03dac6','#ff6b00','#4e8ef7','#e65750','#00b894','#f7931a','#bb86fc','#00b4d8'];
+function emailAvatarColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  return avatarColors[Math.abs(h) % avatarColors.length];
+}
+
+function switchEmailFolder(folder) {
+  emailFolder = folder;
+  document.querySelectorAll('.email-tab').forEach(t => t.classList.remove('active'));
+  const map = { inbox: 'etInbox', sent: 'etSent', drafts: 'etDrafts', trash: 'etTrash' };
+  document.getElementById(map[folder])?.classList.add('active');
+  document.getElementById('emailStatusBar').textContent = folder.charAt(0).toUpperCase() + folder.slice(1);
+  renderEmailList();
+}
+
+function renderEmailList() {
+  const emails = getEmails();
+  const search = (document.getElementById('emailSearchInput')?.value || '').toLowerCase();
+  let filtered = emails.filter(e => e.folder === emailFolder);
+  if (search) {
+    filtered = filtered.filter(e =>
+      e.subject.toLowerCase().includes(search) ||
+      e.from.toLowerCase().includes(search) ||
+      e.body.toLowerCase().includes(search) ||
+      (e.to || '').toLowerCase().includes(search)
+    );
+  }
+  filtered.sort((a, b) => b.ts - a.ts);
+
+  const container = document.getElementById('emailListContainer');
+  if (!filtered.length) {
+    const labels = { inbox: 'Your inbox is empty', sent: 'No sent emails', drafts: 'No drafts', trash: 'Trash is empty' };
+    container.innerHTML = `<div class="email-empty"><div class="ee-icon">📭</div><div class="ee-title">${labels[emailFolder] || 'No emails'}</div><div class="ee-sub">${emailFolder === 'inbox' ? 'Compose your first email!' : ''}</div></div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(e => {
+    const initial = (e.folder === 'sent' ? (e.to || '?')[0] : (e.from || '?')[0]).toUpperCase();
+    const color = emailAvatarColor(e.folder === 'sent' ? (e.to || '') : e.from);
+    const unread = !e.read ? 'unread' : '';
+    const display = e.folder === 'sent' ? ('To: ' + (e.to || '')) : e.from;
+    return `<div class="email-item ${unread}" onclick="openEmail('${e.id}')">
+      ${!e.read ? '<div class="ei-dot"></div>' : ''}
+      <div class="ei-avatar" style="background:${color}">${initial}</div>
+      <div class="ei-content">
+        <div class="ei-top"><span class="ei-from">${display}</span><span class="ei-time">${emailTimeFormat(e.ts)}</span></div>
+        <div class="ei-subject">${e.subject || '(No subject)'}</div>
+        <div class="ei-preview">${(e.body || '').substring(0, 80).replace(/\n/g, ' ')}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  updateEmailBadges();
+}
+
+function updateEmailBadges() {
+  const emails = getEmails();
+  const unread = emails.filter(e => e.folder === 'inbox' && !e.read).length;
+  const badge = document.getElementById('etInboxBadge');
+  if (unread > 0) {
+    badge.textContent = unread;
+    badge.style.display = '';
+  } else {
+    badge.style.display = 'none';
+  }
+  // Home screen badge
+  const homeCount = document.getElementById('emailUnreadCount');
+  if (homeCount) homeCount.textContent = unread || '0';
+}
+
+function filterEmails() { renderEmailList(); }
+
+function refreshEmailClient() {
+  renderEmailList();
+  // Future: fetch from mail API here
+}
+
+// ── Open / Read Email ──
+function openEmail(id) {
+  const emails = getEmails();
+  const email = emails.find(e => e.id === id);
+  if (!email) return;
+
+  // If draft, open in compose
+  if (email.folder === 'drafts') {
+    emailEditDraftId = id;
+    document.getElementById('ecTo').value = email.to || '';
+    document.getElementById('ecSubject').value = email.subject || '';
+    document.getElementById('ecBody').value = email.body || '';
+    document.getElementById('ecTitle').textContent = 'Edit Draft';
+    document.getElementById('emailCompose').classList.add('open');
+    return;
+  }
+
+  // Mark as read
+  email.read = true;
+  saveEmails(emails);
+  emailCurrentId = id;
+
+  const initial = (email.from || '?')[0].toUpperCase();
+  const color = emailAvatarColor(email.from);
+  document.getElementById('erAvatar').style.background = color;
+  document.getElementById('erAvatar').textContent = initial;
+  document.getElementById('erFrom').textContent = email.from;
+  document.getElementById('erEmail').textContent = email.fromEmail || '';
+  document.getElementById('erDate').textContent = emailTimeFormat(email.ts);
+  document.getElementById('erSubject').textContent = email.subject;
+  document.getElementById('erTitle').textContent = email.subject;
+  document.getElementById('erBody').textContent = email.body;
+  document.getElementById('emailRead').classList.add('open');
+  updateEmailBadges();
+}
+
+function closeEmailRead() {
+  document.getElementById('emailRead').classList.remove('open');
+  emailCurrentId = null;
+  renderEmailList();
+}
+
+function deleteReadEmail() {
+  if (!emailCurrentId) return;
+  const emails = getEmails();
+  const idx = emails.findIndex(e => e.id === emailCurrentId);
+  if (idx === -1) return;
+  if (emails[idx].folder === 'trash') {
+    // Permanently delete
+    if (confirm('Permanently delete this email?')) {
+      emails.splice(idx, 1);
+      saveEmails(emails);
+      closeEmailRead();
+    }
+  } else {
+    emails[idx].folder = 'trash';
+    saveEmails(emails);
+    closeEmailRead();
+  }
+}
+
+// ── Compose ──
+function openEmailCompose() {
+  emailEditDraftId = null;
+  document.getElementById('ecTo').value = '';
+  document.getElementById('ecSubject').value = '';
+  document.getElementById('ecBody').value = '';
+  document.getElementById('ecTitle').textContent = 'New Email';
+  document.getElementById('emailCompose').classList.add('open');
+}
+
+function closeEmailCompose() {
+  const to = document.getElementById('ecTo').value.trim();
+  const subject = document.getElementById('ecSubject').value.trim();
+  const body = document.getElementById('ecBody').value.trim();
+  if (to || subject || body) {
+    if (confirm('Save as draft?')) {
+      saveEmailDraft();
+    }
+  }
+  document.getElementById('emailCompose').classList.remove('open');
+  emailEditDraftId = null;
+}
+
+function saveEmailDraft() {
+  const to = document.getElementById('ecTo').value.trim();
+  const subject = document.getElementById('ecSubject').value.trim();
+  const body = document.getElementById('ecBody').value.trim();
+  if (!to && !subject && !body) { alert('Nothing to save.'); return; }
+
+  const emails = getEmails();
+  if (emailEditDraftId) {
+    const idx = emails.findIndex(e => e.id === emailEditDraftId);
+    if (idx !== -1) {
+      emails[idx].to = to;
+      emails[idx].subject = subject || '(No subject)';
+      emails[idx].body = body;
+      emails[idx].ts = Date.now();
+    }
+  } else {
+    emails.push({
+      id: 'draft-' + Date.now(),
+      folder: 'drafts',
+      from: 'Me',
+      fromEmail: localStorage.getItem('sz_mail') ? JSON.parse(localStorage.getItem('sz_mail')).email : 'me@subzero.app',
+      to: to,
+      subject: subject || '(No subject)',
+      body: body,
+      ts: Date.now(),
+      read: true
+    });
+  }
+  saveEmails(emails);
+  document.getElementById('emailCompose').classList.remove('open');
+  emailEditDraftId = null;
+  switchEmailFolder('drafts');
+}
+
+function sendEmail() {
+  const to = document.getElementById('ecTo').value.trim();
+  const subject = document.getElementById('ecSubject').value.trim();
+  const body = document.getElementById('ecBody').value.trim();
+  if (!to) { alert('Enter a recipient email.'); return; }
+
+  const emails = getEmails();
+
+  // If editing a draft, remove it
+  if (emailEditDraftId) {
+    const idx = emails.findIndex(e => e.id === emailEditDraftId);
+    if (idx !== -1) emails.splice(idx, 1);
+  }
+
+  const myEmail = localStorage.getItem('sz_mail') ? JSON.parse(localStorage.getItem('sz_mail')).email : 'me@subzero.app';
+  const myName = localStorage.getItem('sz_mail') ? JSON.parse(localStorage.getItem('sz_mail')).name : 'Me';
+
+  // Save to Sent
+  emails.push({
+    id: 'sent-' + Date.now(),
+    folder: 'sent',
+    from: myName,
+    fromEmail: myEmail,
+    to: to,
+    subject: subject || '(No subject)',
+    body: body,
+    ts: Date.now(),
+    read: true
+  });
+  saveEmails(emails);
+
+  // Try to open mailto (will trigger native email app if available)
+  const mailtoUrl = 'mailto:' + encodeURIComponent(to)
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+  window.open(mailtoUrl, '_blank');
+
+  document.getElementById('emailCompose').classList.remove('open');
+  emailEditDraftId = null;
+  switchEmailFolder('sent');
+}
+
+// ── Reply / Forward ──
+function replyToEmail() {
+  const emails = getEmails();
+  const email = emails.find(e => e.id === emailCurrentId);
+  if (!email) return;
+  closeEmailRead();
+  emailEditDraftId = null;
+  document.getElementById('ecTo').value = email.fromEmail || email.from;
+  document.getElementById('ecSubject').value = 'Re: ' + email.subject;
+  document.getElementById('ecBody').value = '\n\n——— Original Message ———\nFrom: ' + email.from + '\nDate: ' + new Date(email.ts).toLocaleString() + '\n\n' + email.body;
+  document.getElementById('ecTitle').textContent = 'Reply';
+  document.getElementById('emailCompose').classList.add('open');
+}
+
+function forwardEmail() {
+  const emails = getEmails();
+  const email = emails.find(e => e.id === emailCurrentId);
+  if (!email) return;
+  closeEmailRead();
+  emailEditDraftId = null;
+  document.getElementById('ecTo').value = '';
+  document.getElementById('ecSubject').value = 'Fwd: ' + email.subject;
+  document.getElementById('ecBody').value = '\n\n——— Forwarded Message ———\nFrom: ' + email.from + '\nDate: ' + new Date(email.ts).toLocaleString() + '\n\n' + email.body;
+  document.getElementById('ecTitle').textContent = 'Forward';
+  document.getElementById('emailCompose').classList.add('open');
+}
+
+// Init email client
+function initEmailClient() {
+  seedWelcomeEmail();
+  renderEmailList();
+  updateEmailBadges();
+}
+
+// ══════════════════════════════════════════════
 //  SHARE / QR
 // ══════════════════════════════════════════════
 function generateQR() {
@@ -3763,6 +4284,7 @@ renderMessages();
 checkStatus();
 initLockSettings();
 initLockScreen();
+initEmailClient();
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
