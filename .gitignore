@@ -1,6 +1,13 @@
 __pycache__/
 *.pyc
 *.pyo
+node_modules/
+twa/.gradle/
+twa/build/
+twa/app/build/
+twa/app/release/
+*.aab
+*.apk
 SubZero_Portable/
 create_shortcut.ps1
 _recolor_all.py
