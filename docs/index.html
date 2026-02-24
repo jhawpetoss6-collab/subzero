@@ -4116,11 +4116,11 @@ function emailTimeFormat(ts) {
   return (d.getMonth()+1) + '/' + d.getDate() + '/' + (d.getFullYear() % 100);
 }
 
-const avatarColors = ['#e040fb','#7c4dff','#03dac6','#ff6b00','#4e8ef7','#e65750','#00b894','#f7931a','#bb86fc','#00b4d8'];
+const emailAvatarColors = ['#e040fb','#7c4dff','#03dac6','#ff6b00','#4e8ef7','#e65750','#00b894','#f7931a','#bb86fc','#00b4d8'];
 function emailAvatarColor(name) {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
-  return avatarColors[Math.abs(h) % avatarColors.length];
+  return emailAvatarColors[Math.abs(h) % emailAvatarColors.length];
 }
 
 function switchEmailFolder(folder) {
