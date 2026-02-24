@@ -2001,6 +2001,9 @@ body {
   <div id="scanHint">Align the QR inside the frame</div>
 </div>
 
+<!-- jsQR fallback for browsers without BarcodeDetector (iOS Safari, Firefox, etc.) -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
 <!-- ═══════ CHAT MENU (3-dot) ═══════ -->
 <div class="ctx-menu" id="chatMenu">
   <div class="ctx-item" onclick="toggleChatSearch();closeChatMenu()"><span class="ctx-icon">🔍</span>Search</div>
@@ -3371,6 +3374,16 @@ function selectPayNet(net) {
 
 let feeConfig = { fee_percent: 2.9, fee_flat_cents: 30, fee_label: 'SubZero Processing Fee', owner_cashapp: '', owner_venmo: '', owner_crypto_eth: '' };
 
+function calcFee(amount) {
+  const pct = feeConfig.fee_percent || 2.9;
+  const flat = (feeConfig.fee_flat_cents || 30) / 100;
+  const fee = Math.round((amount * pct / 100 + flat) * 100) / 100;
+  const total = Math.round((amount + fee) * 100) / 100;
+  const amountCents = Math.round(amount * 100);
+  const feeCents = Math.round(fee * 100);
+  return { amount, fee, total, amountCents, feeCents };
+}
+
 function updatePayQR() {
   const amt = document.getElementById('payAmount').value || '0';
   document.getElementById('payUsd').textContent = parseFloat(amt || 0).toFixed(2);
@@ -3387,12 +3400,6 @@ function selectQRMethod(method, ev) {
   if (document.getElementById('payQRSection').style.display !== 'none') {
     showPayQR('receive');
   }
-}
-
-function getPayAddr() {
-  const cents = Math.round(amountUsd * 100);
-  const feeCents = Math.round(cents * feeConfig.fee_percent / 100) + feeConfig.fee_flat_cents;
-  return { amount: amountUsd, fee: feeCents / 100, total: (cents + feeCents) / 100, feeCents, amountCents: cents };
 }
 
 function updateFeeDisplay() {
@@ -3587,28 +3594,39 @@ async function startQRScanner() {
   const overlay=document.getElementById('scanOverlay');
   const video=document.getElementById('scanVideo');
   overlay.classList.add('open');
+  document.getElementById('scanHint').textContent='Starting camera...';
   try{
     scanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
     video.srcObject=scanStream;
     await video.play();
-    const detector=('BarcodeDetector' in window)? new BarcodeDetector({formats:['qr_code']}) : null;
+    document.getElementById('scanHint').textContent='Align the QR inside the frame';
+    const useBarcodeDetector=('BarcodeDetector' in window);
+    const detector=useBarcodeDetector? new BarcodeDetector({formats:['qr_code']}) : null;
     const canvas=document.createElement('canvas');
     const ctx=canvas.getContext('2d');
     async function tick(){
       if(!overlay.classList.contains('open')) return;
+      if(video.videoWidth===0){ scanTimer=requestAnimationFrame(tick); return; }
       canvas.width=video.videoWidth; canvas.height=video.videoHeight;
       ctx.drawImage(video,0,0,canvas.width,canvas.height);
+      // Try BarcodeDetector first (Chrome Android)
       if(detector){
         try{
           const codes=await detector.detect(canvas);
           if(codes && codes.length){ onQRDetected(codes[0].rawValue); return; }
         }catch{}
       }
+      // Fallback: jsQR library (works on iOS Safari, Firefox, all browsers)
+      if(!detector && typeof jsQR !== 'undefined'){
+        const imageData=ctx.getImageData(0,0,canvas.width,canvas.height);
+        const code=jsQR(imageData.data,canvas.width,canvas.height,{inversionAttempts:'dontInvert'});
+        if(code && code.data){ onQRDetected(code.data); return; }
+      }
       scanTimer=requestAnimationFrame(tick);
     }
     scanTimer=requestAnimationFrame(tick);
   }catch(e){
-    alert('Camera unavailable. Grant permission or use the device browser camera.');
+    alert('Camera unavailable. Grant camera permission in your browser settings and try again.');
     stopQRScanner();
   }
 }
