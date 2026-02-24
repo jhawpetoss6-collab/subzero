@@ -1,14 +1,17 @@
 """
-SubZero Telegram Bridge — IMPROVED VERSION
-═══════════════════════════════════════════
-Enhanced with better error handling, connection retry, and timeout management.
+SubZero Telegram Bridge — Spine Rip ↔ Telegram
+═══════════════════════════════════════════════
+Routes Telegram messages to the local Ollama AI (qwen2.5:1.5b)
+and executes tools via the SubZero ToolRuntime.
 
-IMPROVEMENTS:
-- Auto-reconnect on connection loss
-- Better timeout handling with user feedback
-- Connection health monitoring
-- Graceful error recovery
-- Detailed error logging
+Setup:
+  1. Message @BotFather on Telegram → /newbot → get your bot token
+  2. Run this module or use the Telegram button in Spine Rip
+  3. It will ask for your token on first run (saved to ~/.subzero/telegram.json)
+
+Usage:
+    python sz_telegram.py            # standalone
+    from sz_telegram import start_bot, stop_bot   # from Spine Rip GUI
 """
 
 import os
@@ -18,7 +21,6 @@ import asyncio
 import logging
 import threading
 import urllib.request
-import time
 from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass
@@ -30,15 +32,9 @@ OLLAMA_URL = "http://localhost:11434"
 DEFAULT_MODEL = "qwen2.5:1.5b"
 NO_WINDOW = 0x08000000
 
-# Connection settings
-MAX_RETRIES = 3
-RETRY_DELAY = 2  # seconds
-OLLAMA_TIMEOUT = 180  # 3 minutes
-CONNECTION_CHECK_INTERVAL = 30  # seconds
-
 # ── Logging ────────────────────────────────────────────────────
 logging.basicConfig(
-    format="%(asctime)s [TelegramBot] %(levelname)s: %(message)s",
+    format="%(asctime)s [TelegramBot] %(message)s",
     level=logging.INFO,
 )
 log = logging.getLogger(__name__)
@@ -53,7 +49,6 @@ try:
     HAS_TELEGRAM = True
 except ImportError:
     HAS_TELEGRAM = False
-    log.error("python-telegram-bot not installed")
 
 # ── Lazy import ToolRuntime ────────────────────────────────────
 try:
@@ -61,48 +56,6 @@ try:
     HAS_RUNTIME = True
 except ImportError:
     HAS_RUNTIME = False
-    log.warning("sz_runtime not available - tools disabled")
-
-
-# ══════════════════════════════════════════════════════════════
-#  Connection Health Monitor
-# ══════════════════════════════════════════════════════════════
-
-class ConnectionMonitor:
-    """Monitors Ollama connection health."""
-    
-    def __init__(self):
-        self.last_check = None
-        self.is_healthy = False
-        self.consecutive_failures = 0
-        self.last_error = None
-    
-    def check_health(self) -> bool:
-        """Check if Ollama is responding."""
-        try:
-            req = urllib.request.Request(f"{OLLAMA_URL}/api/tags")
-            with urllib.request.urlopen(req, timeout=5) as resp:
-                self.is_healthy = (resp.status == 200)
-                self.consecutive_failures = 0
-                self.last_check = datetime.now()
-                return True
-        except Exception as e:
-            self.is_healthy = False
-            self.consecutive_failures += 1
-            self.last_error = str(e)
-            self.last_check = datetime.now()
-            return False
-    
-    def get_status(self) -> str:
-        """Get human-readable status."""
-        if self.is_healthy:
-            return "🟢 Online"
-        elif self.consecutive_failures > 5:
-            return f"🔴 Offline (failed {self.consecutive_failures}x)"
-        else:
-            return f"🟡 Unstable ({self.consecutive_failures} failures)"
-
-_connection_monitor = ConnectionMonitor()
 
 
 # ══════════════════════════════════════════════════════════════
@@ -115,131 +68,61 @@ def load_config() -> dict:
     if TELEGRAM_CONFIG.exists():
         try:
             return json.loads(TELEGRAM_CONFIG.read_text("utf-8"))
-        except Exception as e:
-            log.error(f"Failed to load config: {e}")
+        except Exception:
+            pass
     return {"bot_token": "", "allowed_users": [], "model": DEFAULT_MODEL}
 
 
 def save_config(cfg: dict):
     """Save telegram.json config."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    try:
-        TELEGRAM_CONFIG.write_text(json.dumps(cfg, indent=2), "utf-8")
-    except Exception as e:
-        log.error(f"Failed to save config: {e}")
+    TELEGRAM_CONFIG.write_text(json.dumps(cfg, indent=2), "utf-8")
 
 
 def get_bot_token() -> str:
-    """Get bot token from config."""
+    """Get bot token from config (or prompt in terminal if standalone)."""
     cfg = load_config()
-    return cfg.get("bot_token", "")
+    if cfg.get("bot_token"):
+        return cfg["bot_token"]
+    return ""
 
 
 # ══════════════════════════════════════════════════════════════
-#  IMPROVED Ollama AI caller with retry logic
+#  Ollama AI caller (same backend as Spine Rip)
 # ══════════════════════════════════════════════════════════════
 
-def ollama_generate(prompt: str, model: str = None, retry_count: int = 0) -> tuple[str, bool]:
-    """
-    Call Ollama REST API with automatic retry on failure.
-    
-    Returns: (response_text, success)
-    """
+def ollama_generate(prompt: str, model: str = None) -> str:
+    """Call Ollama REST API — same engine Spine Rip uses."""
     model = model or DEFAULT_MODEL
-    
     try:
-        log.info(f"Calling Ollama (attempt {retry_count + 1}/{MAX_RETRIES + 1})...")
-        
         payload = json.dumps({
             "model": model,
             "prompt": prompt,
             "stream": False,
         }).encode("utf-8")
-        
         req = urllib.request.Request(
             f"{OLLAMA_URL}/api/generate",
             data=payload,
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        
-        start_time = time.time()
-        with urllib.request.urlopen(req, timeout=OLLAMA_TIMEOUT) as resp:
+        with urllib.request.urlopen(req, timeout=180) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-        
-        elapsed = time.time() - start_time
-        response_text = data.get("response", "").strip()
-        
-        if response_text:
-            log.info(f"✓ Response received in {elapsed:.1f}s")
-            _connection_monitor.is_healthy = True
-            _connection_monitor.consecutive_failures = 0
-            return response_text, True
-        else:
-            log.warning("Empty response from Ollama")
-            return "[No response from AI - please try again]", False
-            
-    except urllib.error.HTTPError as e:
-        error_msg = f"HTTP {e.code}: {e.reason}"
-        log.error(f"Ollama HTTP error: {error_msg}")
-        
-        if e.code == 404:
-            return (
-                f"⚠️ Model '{model}' not found.\n\n"
-                f"Install it with:\n`ollama pull {model}`",
-                False
-            )
-        
-        # Retry on server errors (5xx)
-        if 500 <= e.code < 600 and retry_count < MAX_RETRIES:
-            log.info(f"Server error, retrying in {RETRY_DELAY}s...")
-            time.sleep(RETRY_DELAY)
-            return ollama_generate(prompt, model, retry_count + 1)
-        
-        return f"⚠️ Ollama error: {error_msg}", False
-        
-    except urllib.error.URLError as e:
-        log.error(f"Connection failed: {e.reason}")
-        _connection_monitor.consecutive_failures += 1
-        
-        # Retry on connection errors
-        if retry_count < MAX_RETRIES:
-            log.info(f"Connection lost, retrying in {RETRY_DELAY}s...")
-            time.sleep(RETRY_DELAY)
-            return ollama_generate(prompt, model, retry_count + 1)
-        
-        return (
-            "⚠️ Cannot connect to Ollama.\n\n"
-            "**Troubleshooting:**\n"
-            "1. Check if Ollama is running:\n   `ollama serve`\n\n"
-            "2. Verify it's accessible:\n   Open http://localhost:11434 in browser\n\n"
-            "3. Test the model:\n   `ollama run qwen2.5:1.5b \"hello\"`"
-        ), False
-        
-    except TimeoutError:
-        log.error(f"Request timed out after {OLLAMA_TIMEOUT}s")
-        _connection_monitor.consecutive_failures += 1
-        
-        return (
-            f"⚠️ Request timed out after {OLLAMA_TIMEOUT}s.\n\n"
-            "**This usually means:**\n"
-            "• The prompt was too long\n"
-            "• Your system is under heavy load\n"
-            "• The model is too large for your hardware\n\n"
-            "**Try:**\n"
-            "• Use a shorter message\n"
-            "• Switch to smaller model: `/model qwen2.5:1.5b`\n"
-            "• Close other applications"
-        ), False
-        
+        return data.get("response", "").strip() or "[No response from AI]"
+    except urllib.error.URLError:
+        return "⚠️ Ollama is not running. Start it with `ollama serve` on the Spine Rip machine."
     except Exception as e:
-        log.error(f"Unexpected error: {e}", exc_info=True)
-        return f"⚠️ Unexpected error: {type(e).__name__}: {e}", False
+        return f"⚠️ AI error: {e}"
 
 
 def is_ollama_online() -> bool:
     """Check if Ollama is reachable."""
-    return _connection_monitor.check_health()
+    try:
+        req = urllib.request.Request(f"{OLLAMA_URL}/api/tags")
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            return resp.status == 200
+    except Exception:
+        return False
 
 
 # ══════════════════════════════════════════════════════════════
@@ -265,7 +148,7 @@ def _add_message(user_id: int, role: str, content: str):
 
 
 # ══════════════════════════════════════════════════════════════
-#  Build AI prompt
+#  Build the AI prompt (mirrors Spine Rip's approach)
 # ══════════════════════════════════════════════════════════════
 
 def _build_prompt(user_id: int, user_msg: str, model: str) -> str:
@@ -285,12 +168,13 @@ def _build_prompt(user_id: int, user_msg: str, model: str) -> str:
         "• Search the web via @tool web_search\n"
         "• Open websites via @tool browser_open\n"
         "• Manage clipboard via @tool clipboard_copy / clipboard_paste\n"
-        "• Alpaca paper trading via @tool trade_buy, trade_sell, trade_quote\n\n"
+        "• Alpaca paper trading via @tool trade_buy, trade_sell, trade_quote\n"
+        "• Deploy SubZero to USB drives or download from GitHub\n\n"
         + tool_prompt
         + "RULES:\n"
         "- Be concise. Telegram messages should be short and readable.\n"
-        "- Use tool calls when the user asks you to DO something.\n"
-        "- NEVER suggest setting API keys — you run locally via Ollama.\n"
+        "- Use tool calls when the user asks you to DO something (run code, create files, etc.).\n"
+        "- NEVER suggest setting API keys or env vars for AI — you run locally via Ollama.\n"
         "- Format code with markdown backticks.\n"
     )
 
@@ -306,7 +190,7 @@ def _build_prompt(user_id: int, user_msg: str, model: str) -> str:
 
 
 # ══════════════════════════════════════════════════════════════
-#  Telegram command handlers (same as original)
+#  Telegram command handlers
 # ══════════════════════════════════════════════════════════════
 
 WELCOME_TEXT = """
@@ -315,21 +199,34 @@ WELCOME_TEXT = """
 Welcome! I'm *Spine Rip*, your personal AI assistant powered by SubZero.
 
 🧠 *What is Spine Rip?*
-Spine Rip is the Telegram interface to *Warp Oz*, the SubZero AI Code Assistant. It runs 100% locally on your machine using Ollama — no cloud, no API keys, no subscriptions.
+Spine Rip is the Telegram interface to *Warp Oz*, the SubZero AI Code Assistant. It runs 100% locally on your machine using Ollama — no cloud, no API keys, no subscriptions. Your conversations stay private.
 
 ⚡ *What I can do:*
-• 💬 Answer questions — coding, debugging, concepts
-• 🖥️ Run commands on your PC
-• 📁 Read & write files
-• 🌐 Search the web
-• 📈 Paper trading
+• 💬 Answer questions — coding, debugging, concepts, anything
+• 🖥️ Run commands on your PC — `@tool run_command cmd="dir"`
+• 📁 Read & write files — create scripts, edit configs
+• 🌐 Search the web — find docs, tutorials, answers
+• 🌍 Open websites — browse pages via automation
+• 📋 Clipboard — copy/paste between me and your PC
+• 📈 Paper trading — Alpaca stock trading (paper mode)
+• 💾 Deploy — push SubZero to USB drives or download updates
+
+🚀 *How to use me:*
+Just type normally! Ask me anything or tell me to do something.
+
+*Examples:*
+  → `write me a python script that sorts a list`
+  → `what files are in my Downloads folder?`
+  → `search the web for PyQt6 tutorial`
+  → `create a file called hello.py with a hello world program`
 
 *Commands:*
-/start — Welcome message
-/help — Quick reference
-/status — Check system status
-/model — Change AI model
-/clear — Clear conversation
+  /start — This welcome message
+  /help — Quick command reference
+  /tools — List all available tools
+  /status — Check Ollama & system status
+  /model — Show or change the AI model
+  /clear — Clear conversation history
 
 _Type anything to get started!_ ❄️
 """
@@ -338,19 +235,73 @@ HELP_TEXT = """
 ❄️ *Spine Rip — Quick Reference*
 
 *Just type naturally:*
-→ Ask questions, give instructions, request code
+  → Ask questions, give instructions, request code
 
 *Slash commands:*
-/start — Welcome & overview
-/help — This reference
-/status — Check Ollama & connection
-/model — Show/change AI model
-/clear — Reset conversation
+  /start — Welcome & overview
+  /help — This reference
+  /tools — List all 31 tools
+  /status — Ollama status, model info
+  /model — Show/change AI model
+  /clear — Reset conversation
+
+*Tool call format (used by AI automatically):*
+  `@tool tool_name param="value"`
 
 *Examples:*
-`list the files in C:\\Users`
-`write a Python web scraper`
-`run the command ipconfig`
+  `list the files in C:\\Users`
+  `write a Python web scraper`
+  `what's the weather in New York?`
+  `run the command ipconfig`
+"""
+
+TOOLS_TEXT = """
+❄️ *Spine Rip — Available Tools (31)*
+
+🖥️ *System*
+  • `run_command` — Execute shell commands
+  • `run_python` — Run Python code
+  • `open_app` — Launch applications
+
+📁 *Files*
+  • `file_read` — Read file contents
+  • `file_write` — Create/overwrite files
+  • `file_append` — Append to files
+  • `file_list` — List directory contents
+  • `file_delete` — Delete files
+
+🌐 *Web*
+  • `web_search` — DuckDuckGo search
+  • `web_get` — HTTP GET request
+  • `web_post` — HTTP POST request
+
+🌍 *Browser Automation*
+  • `browser_open` — Open URL in browser
+  • `browser_click` — Click elements
+  • `browser_type` — Type into fields
+  • `browser_read` — Read page text
+  • `browser_screenshot` — Capture page
+  • `browser_wait` — Wait for elements
+  • `browser_close` — Close browser
+
+📋 *Clipboard*
+  • `clipboard_copy` — Copy text
+  • `clipboard_paste` — Read clipboard
+
+📈 *Trading (Alpaca Paper)*
+  • `trade_quote` — Get stock price
+  • `trade_buy` — Buy shares
+  • `trade_sell` — Sell shares
+  • `trade_positions` — View positions
+  • `trade_portfolio` — Portfolio summary
+  • `trade_history` — Order history
+  • `trade_cancel` — Cancel order
+  • `trade_watchlist` — View watchlist
+
+💾 *Deployment*
+  • `detect_usb` — Find USB drives
+  • `deploy_to_usb` — Copy SubZero to USB
+  • `download_subzero` — Download from GitHub
 """
 
 
@@ -365,31 +316,28 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(HELP_TEXT, parse_mode="Markdown")
 
 
+async def cmd_tools(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle /tools command."""
+    await update.message.reply_text(TOOLS_TEXT, parse_mode="Markdown")
+
+
 async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /status command with enhanced connection info."""
+    """Handle /status command."""
     cfg = load_config()
     model = cfg.get("model", DEFAULT_MODEL)
-    
-    # Force fresh health check
     online = is_ollama_online()
-    status = _connection_monitor.get_status()
-    
+    status_icon = "🟢" if online else "🔴"
     user_id = update.effective_user.id
     hist_len = len(_get_history(user_id))
 
     text = (
         f"❄️ *Spine Rip Status*\n\n"
-        f"{status}\n"
+        f"{status_icon} Ollama: {'Online' if online else 'Offline'}\n"
         f"🧠 Model: `{model}`\n"
         f"💬 Messages in memory: {hist_len}\n"
         f"🖥️ Platform: Windows\n"
         f"⏰ Server time: {datetime.now().strftime('%H:%M:%S')}\n"
     )
-    
-    if not online:
-        text += f"\n⚠️ Last error: {_connection_monitor.last_error}\n"
-        text += f"Failed checks: {_connection_monitor.consecutive_failures}\n"
-    
     if HAS_RUNTIME:
         text += "🔧 Tool Runtime: Loaded (31 tools)\n"
     else:
@@ -399,7 +347,7 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def cmd_model(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /model command."""
+    """Handle /model command — show or change model."""
     cfg = load_config()
     current = cfg.get("model", DEFAULT_MODEL)
 
@@ -414,7 +362,7 @@ async def cmd_model(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         log.info(f"Model changed to {new_model}")
     else:
-        models = ["qwen2.5:1.5b", "llama3.2", "qwen2.5:3b", "codellama", "mistral"]
+        models = ["qwen2.5:1.5b", "llama3.2", "codellama", "deepseek-coder", "mistral"]
         model_list = "\n".join(
             f"  {'→' if m == current else '  '} `{m}`" for m in models
         )
@@ -427,7 +375,7 @@ async def cmd_model(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def cmd_clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /clear command."""
+    """Handle /clear command — reset conversation."""
     user_id = update.effective_user.id
     _conversations[user_id] = []
     await update.message.reply_text("🗑️ Conversation cleared. Fresh start!")
@@ -435,11 +383,11 @@ async def cmd_clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # ══════════════════════════════════════════════════════════════
-#  IMPROVED Message handler with better error handling
+#  Message handler — the main AI bridge
 # ══════════════════════════════════════════════════════════════
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle regular text messages with enhanced error handling."""
+    """Handle regular text messages — send to Ollama AI."""
     user_msg = update.message.text
     if not user_msg or not user_msg.strip():
         return
@@ -453,90 +401,64 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Check Ollama is running
     if not is_ollama_online():
-        status = _connection_monitor.get_status()
         await update.message.reply_text(
-            f"{status}\n\n"
-            "**Ollama is not responding.**\n\n"
-            "Start it with:\n`ollama serve`\n\n"
-            f"Then pull the model:\n`ollama pull {model}`",
+            "⚠️ Ollama is offline. Start it on your PC:\n"
+            "`ollama serve`\n"
+            f"Then make sure the model is pulled:\n"
+            f"`ollama pull {model}`",
             parse_mode="Markdown",
         )
         return
 
     # Show typing indicator
-    try:
-        await update.message.chat.send_action("typing")
-    except Exception as e:
-        log.warning(f"Could not send typing action: {e}")
+    await update.message.chat.send_action("typing")
 
     # Save user message
     _add_message(user_id, "user", user_msg)
 
-    # Build prompt and call AI with error handling
-    try:
-        prompt = _build_prompt(user_id, user_msg, model)
-        
-        # Show progress for long operations
-        if len(prompt) > 2000:
-            await update.message.reply_text("⏳ Processing (this may take 20-30 seconds)...")
-        
-        response, success = await asyncio.to_thread(ollama_generate, prompt, model)
-        
-        if not success:
-            # Error response - send as-is
-            await update.message.reply_text(response, parse_mode="Markdown")
-            return
-        
-        # Save AI response
-        _add_message(user_id, "assistant", response)
+    # Build prompt and call AI
+    prompt = _build_prompt(user_id, user_msg, model)
+    response = await asyncio.to_thread(ollama_generate, prompt, model)
 
-        # Execute any tool calls from the response
-        tool_output = ""
-        if HAS_RUNTIME and success:
-            try:
-                rt = ToolRuntime()
-                tool_calls = rt.parse(response)
-                if tool_calls:
-                    results = await asyncio.to_thread(rt.execute_all, tool_calls)
-                    tool_parts = []
-                    for r in results:
-                        icon = "✅" if r.success else "❌"
-                        tool_parts.append(f"{icon} `{r.tool_name}`: {r.output[:500]}")
-                    if tool_parts:
-                        tool_output = "\n\n🔧 *Tool Results:*\n" + "\n".join(tool_parts)
-            except Exception as e:
-                log.error(f"Tool execution error: {e}", exc_info=True)
-                tool_output = f"\n\n⚠️ Tool execution failed: {e}"
+    # Save AI response
+    _add_message(user_id, "assistant", response)
 
-        # Send response (split if too long)
-        full_response = response + tool_output
-        if len(full_response) > 4000:
-            chunks = [full_response[i:i+4000] for i in range(0, len(full_response), 4000)]
-            for i, chunk in enumerate(chunks):
-                try:
-                    if i > 0:
-                        await asyncio.sleep(0.5)  # Rate limit
-                    await update.message.reply_text(chunk, parse_mode="Markdown")
-                except Exception:
-                    await update.message.reply_text(chunk)
-        else:
+    # Execute any tool calls from the response
+    tool_output = ""
+    if HAS_RUNTIME:
+        rt = ToolRuntime()
+        tool_calls = rt.parse(response)
+        if tool_calls:
+            results = await asyncio.to_thread(rt.execute_all, tool_calls)
+            tool_parts = []
+            for r in results:
+                icon = "✅" if r.success else "❌"
+                tool_parts.append(f"{icon} `{r.tool_name}`: {r.output[:500]}")
+            if tool_parts:
+                tool_output = "\n\n🔧 *Tool Results:*\n" + "\n".join(tool_parts)
+
+    # Send response (split if too long for Telegram's 4096 char limit)
+    full_response = response + tool_output
+    if len(full_response) > 4000:
+        # Split into chunks
+        chunks = [full_response[i:i+4000] for i in range(0, len(full_response), 4000)]
+        for chunk in chunks:
             try:
-                await update.message.reply_text(full_response, parse_mode="Markdown")
+                await update.message.reply_text(chunk, parse_mode="Markdown")
             except Exception:
-                await update.message.reply_text(full_response)
+                await update.message.reply_text(chunk)
+    else:
+        try:
+            await update.message.reply_text(full_response, parse_mode="Markdown")
+        except Exception:
+            # Fallback without markdown if parsing fails
+            await update.message.reply_text(full_response)
 
-        log.info(f"[Spine Rip → {user_name}] Response sent successfully")
-        
-    except Exception as e:
-        log.error(f"Message handling error: {e}", exc_info=True)
-        await update.message.reply_text(
-            f"⚠️ An error occurred: {type(e).__name__}\n\n"
-            "Please try again or use /status to check the system."
-        )
+    log.info(f"[Spine Rip → {user_name}] {response[:80]}...")
 
 
 # ══════════════════════════════════════════════════════════════
-#  Bot lifecycle with improved error handling
+#  Bot lifecycle
 # ══════════════════════════════════════════════════════════════
 
 _app_instance: "Application | None" = None
@@ -545,38 +467,32 @@ _bot_loop: asyncio.AbstractEventLoop | None = None
 
 
 def _run_bot(token: str):
-    """Run the bot with auto-restart on errors."""
+    """Run the bot in its own event loop (for threading)."""
     global _app_instance, _bot_loop
 
-    try:
-        _bot_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(_bot_loop)
+    _bot_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(_bot_loop)
 
-        _app_instance = Application.builder().token(token).build()
+    _app_instance = Application.builder().token(token).build()
 
-        # Register handlers
-        _app_instance.add_handler(CommandHandler("start", cmd_start))
-        _app_instance.add_handler(CommandHandler("help", cmd_help))
-        _app_instance.add_handler(CommandHandler("status", cmd_status))
-        _app_instance.add_handler(CommandHandler("model", cmd_model))
-        _app_instance.add_handler(CommandHandler("clear", cmd_clear))
-        _app_instance.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    # Register handlers
+    _app_instance.add_handler(CommandHandler("start", cmd_start))
+    _app_instance.add_handler(CommandHandler("help", cmd_help))
+    _app_instance.add_handler(CommandHandler("tools", cmd_tools))
+    _app_instance.add_handler(CommandHandler("status", cmd_status))
+    _app_instance.add_handler(CommandHandler("model", cmd_model))
+    _app_instance.add_handler(CommandHandler("clear", cmd_clear))
+    _app_instance.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-        log.info("✓ Spine Rip Telegram bot is running!")
-        log.info("  Send /start to your bot to begin")
-        
-        _bot_loop.run_until_complete(_app_instance.run_polling(
-            drop_pending_updates=True,
-            allowed_updates=Update.ALL_TYPES
-        ))
-        
-    except Exception as e:
-        log.error(f"Bot crashed: {e}", exc_info=True)
-        log.info("Bot will need manual restart")
+    log.info("Spine Rip Telegram bot is running! Send /start to your bot.")
+    _bot_loop.run_until_complete(_app_instance.run_polling(drop_pending_updates=True))
 
 
 def start_bot(token: str = None) -> tuple[bool, str]:
-    """Start the Telegram bot in a background thread."""
+    """Start the Telegram bot in a background thread.
+
+    Returns (success, message).
+    """
     global _bot_thread
 
     if not HAS_TELEGRAM:
@@ -587,19 +503,16 @@ def start_bot(token: str = None) -> tuple[bool, str]:
 
     token = token or get_bot_token()
     if not token:
-        return False, "No bot token configured. Set it in ~/.subzero/telegram.json"
+        return False, "No bot token configured. Set it in ~/.subzero/telegram.json or pass it directly."
 
-    # Save token
+    # Save token to config
     cfg = load_config()
     cfg["bot_token"] = token
     save_config(cfg)
 
-    # Start bot thread
     _bot_thread = threading.Thread(target=_run_bot, args=(token,), daemon=True)
     _bot_thread.start()
-    
-    log.info("Bot thread started successfully")
-    return True, "✓ Spine Rip Telegram bot started! Open Telegram and message your bot."
+    return True, "Spine Rip Telegram bot started! Open Telegram and message your bot."
 
 
 def stop_bot() -> tuple[bool, str]:
@@ -608,14 +521,12 @@ def stop_bot() -> tuple[bool, str]:
 
     if _app_instance and _bot_loop:
         try:
-            _bot_loop.call_soon_threadsafe(_app_instance.stop)
+            _bot_loop.call_soon_threadsafe(_app_instance.stop_running)
             _app_instance = None
             _bot_thread = None
             _bot_loop = None
-            log.info("Bot stopped successfully")
-            return True, "✓ Telegram bot stopped."
+            return True, "Telegram bot stopped."
         except Exception as e:
-            log.error(f"Error stopping bot: {e}")
             return False, f"Error stopping bot: {e}"
     return False, "Bot is not running."
 
@@ -657,42 +568,22 @@ if __name__ == "__main__":
         print(f"\n✅ Token saved to {TELEGRAM_CONFIG}")
 
     print()
-    print("❄️  Starting Spine Rip Telegram bot (IMPROVED VERSION)...")
+    print("❄️  Starting Spine Rip Telegram bot...")
     print(f"   Model: {cfg.get('model', DEFAULT_MODEL)}")
-    
-    # Check Ollama before starting
-    if is_ollama_online():
-        print(f"   Ollama: {_connection_monitor.get_status()}")
-    else:
-        print("   Ollama: 🔴 OFFLINE")
-        print()
-        print("   ⚠️  Start Ollama first:")
-        print("      ollama serve")
-        print()
-        ans = input("Continue anyway? (y/n): ")
-        if ans.lower() != 'y':
-            sys.exit(0)
-    
+    print(f"   Ollama: {'Online' if is_ollama_online() else 'OFFLINE — run ollama serve'}")
     print()
-    print("✓ Bot is starting...")
-    print("  Open Telegram and send /start to your bot!")
-    print("  Press Ctrl+C to stop.")
-    print()
+    print("Open Telegram and send /start to your bot!")
+    print("Press Ctrl+C to stop.\n")
 
     try:
         app = Application.builder().token(token).build()
         app.add_handler(CommandHandler("start", cmd_start))
         app.add_handler(CommandHandler("help", cmd_help))
+        app.add_handler(CommandHandler("tools", cmd_tools))
         app.add_handler(CommandHandler("status", cmd_status))
         app.add_handler(CommandHandler("model", cmd_model))
         app.add_handler(CommandHandler("clear", cmd_clear))
         app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-        
-        print("✓ Bot is running!\n")
         app.run_polling(drop_pending_updates=True)
-        
     except KeyboardInterrupt:
-        print("\n\n✓ Bot stopped by user.")
-    except Exception as e:
-        print(f"\n\n✗ Bot crashed: {e}")
-        log.error(f"Bot crashed", exc_info=True)
+        print("\nBot stopped.")

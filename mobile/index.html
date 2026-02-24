@@ -885,6 +885,44 @@ body {
   box-shadow:0 4px 16px rgba(3,218,198,.4);z-index:10;
 }
 .email-fab:active { transform:scale(.95); }
+/* Email account setup */
+.email-account-bar {
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:var(--bg3);border-bottom:1px solid var(--border);cursor:pointer;
+}
+.email-account-bar .eab-avatar {
+  width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;background:var(--accent);color:#000;
+}
+.email-account-bar .eab-info { flex:1;min-width:0; }
+.email-account-bar .eab-email { font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.email-account-bar .eab-provider { font-size:11px;color:var(--fg-dim); }
+.email-account-bar .eab-edit { font-size:11px;color:var(--accent);font-weight:700; }
+.email-account-setup {
+  padding:20px 16px;background:var(--bg);display:flex;flex-direction:column;align-items:center;
+}
+.email-account-setup .eas-icon { font-size:48px;margin-bottom:12px; }
+.email-account-setup .eas-title { font-size:18px;font-weight:800;color:var(--accent);margin-bottom:4px; }
+.email-account-setup .eas-sub { font-size:13px;color:var(--fg-dim);text-align:center;margin-bottom:16px; }
+.email-account-setup .eas-form { width:100%;max-width:340px; }
+.email-account-setup .eas-form label { font-size:12px;color:var(--fg-dim);display:block;margin-bottom:4px;font-weight:600; }
+.email-account-setup .eas-form input, .email-account-setup .eas-form select {
+  width:100%;background:var(--bg-input);color:var(--fg);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;font-size:14px;outline:none;margin-bottom:12px;
+}
+.email-account-setup .eas-form input:focus { border-color:var(--accent); }
+.eas-quick-btns { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px; }
+.eas-quick-btn {
+  padding:8px 14px;border:1px solid var(--border);border-radius:20px;
+  background:var(--bg3);color:var(--fg);font-size:12px;font-weight:600;cursor:pointer;
+}
+.eas-quick-btn:active { background:var(--bg4); }
+.eas-quick-btn.active { border-color:var(--accent);background:rgba(3,218,198,.1);color:var(--accent); }
+.eas-save-btn {
+  width:100%;padding:14px;border:none;border-radius:12px;
+  background:var(--accent);color:#000;font-size:15px;font-weight:800;cursor:pointer;
+}
+.eas-save-btn:active { background:#04f0d8; }
 /* ── NOTIFICATION CENTER ──────────────── */
 .notif-bell { position:relative;background:none;border:none;font-size:20px;cursor:pointer;padding:4px; }
 .notif-bell .nb-badge {
@@ -1439,16 +1477,52 @@ body {
     <div class="info"><div class="name">SubZero Email</div><div class="status" id="emailStatusBar">Inbox</div></div>
     <button class="hbtn" onclick="refreshEmailClient()">🔄</button>
   </div>
-  <div class="email-tabs">
+  <!-- Account Bar (shown when account is linked) -->
+  <div class="email-account-bar" id="emailAccountBar" style="display:none" onclick="showEmailAccountSetup()">
+    <div class="eab-avatar" id="eabAvatar">S</div>
+    <div class="eab-info">
+      <div class="eab-email" id="eabEmail">you@subzero.website</div>
+      <div class="eab-provider" id="eabProvider">SubZero Email</div>
+    </div>
+    <div class="eab-edit">✏️ Edit</div>
+  </div>
+
+  <!-- Account Setup (shown when no account) -->
+  <div class="email-account-setup" id="emailAccountSetup">
+    <div class="eas-icon">📨</div>
+    <div class="eas-title">Connect Your Email</div>
+    <div class="eas-sub">Use your existing email or create a @subzero.website address</div>
+    <div class="eas-form">
+      <label>Quick Setup</label>
+      <div class="eas-quick-btns">
+        <div class="eas-quick-btn" onclick="prefillEmailProvider('subzero')">SubZero Email</div>
+        <div class="eas-quick-btn" onclick="prefillEmailProvider('gmail')">Gmail</div>
+        <div class="eas-quick-btn" onclick="prefillEmailProvider('outlook')">Outlook</div>
+        <div class="eas-quick-btn" onclick="prefillEmailProvider('yahoo')">Yahoo</div>
+        <div class="eas-quick-btn" onclick="prefillEmailProvider('icloud')">iCloud</div>
+        <div class="eas-quick-btn" onclick="prefillEmailProvider('other')">Other</div>
+      </div>
+      <label>Your Name</label>
+      <input type="text" id="easName" placeholder="Your Name">
+      <label>Email Address</label>
+      <input type="email" id="easEmail" placeholder="you@subzero.website">
+      <button class="eas-save-btn" onclick="saveEmailAccount()">Connect Email</button>
+      <div style="font-size:11px;color:var(--fg-dim);text-align:center;margin-top:8px;">
+        🔒 Your email is stored locally on this device only
+      </div>
+    </div>
+  </div>
+
+  <div class="email-tabs" id="emailTabsBar" style="display:none">
     <div class="email-tab active" id="etInbox" onclick="switchEmailFolder('inbox')">📥 Inbox<span class="et-badge" id="etInboxBadge" style="display:none">0</span></div>
     <div class="email-tab" id="etSent" onclick="switchEmailFolder('sent')">📤 Sent</div>
     <div class="email-tab" id="etDrafts" onclick="switchEmailFolder('drafts')">📝 Drafts</div>
     <div class="email-tab" id="etTrash" onclick="switchEmailFolder('trash')">🗑️ Trash</div>
   </div>
-  <div class="email-toolbar">
+  <div class="email-toolbar" id="emailToolbarBar" style="display:none">
     <input type="text" id="emailSearchInput" placeholder="Search emails..." oninput="filterEmails()">
   </div>
-  <div class="email-body">
+  <div class="email-body" id="emailBodySection" style="display:none">
     <div class="email-list" id="emailListContainer">
       <div class="email-empty">
         <div class="ee-icon">📭</div>
@@ -4224,7 +4298,7 @@ function saveEmailDraft() {
       id: 'draft-' + Date.now(),
       folder: 'drafts',
       from: 'Me',
-      fromEmail: localStorage.getItem('sz_mail') ? JSON.parse(localStorage.getItem('sz_mail')).email : 'me@subzero.app',
+      fromEmail: getMyEmailInfo().email,
       to: to,
       subject: subject || '(No subject)',
       body: body,
@@ -4243,6 +4317,7 @@ function sendEmail() {
   const subject = document.getElementById('ecSubject').value.trim();
   const body = document.getElementById('ecBody').value.trim();
   if (!to) { alert('Enter a recipient email.'); return; }
+  if (!getEmailAccount()) { alert('Connect your email first.'); showEmailAccountSetup(); return; }
 
   const emails = getEmails();
 
@@ -4252,8 +4327,7 @@ function sendEmail() {
     if (idx !== -1) emails.splice(idx, 1);
   }
 
-  const myEmail = localStorage.getItem('sz_mail') ? JSON.parse(localStorage.getItem('sz_mail')).email : 'me@subzero.app';
-  const myName = localStorage.getItem('sz_mail') ? JSON.parse(localStorage.getItem('sz_mail')).name : 'Me';
+  const { email: myEmail, name: myName } = getMyEmailInfo();
 
   // Save to Sent
   emails.push({
@@ -4311,9 +4385,105 @@ function forwardEmail() {
   document.getElementById('emailCompose').classList.add('open');
 }
 
+// ── Email Account Setup ──
+const EMAIL_ACCT_KEY = 'sz_email_account';
+
+function getEmailAccount() { return JSON.parse(localStorage.getItem(EMAIL_ACCT_KEY) || 'null'); }
+
+function saveEmailAccount() {
+  const name = document.getElementById('easName').value.trim();
+  const email = document.getElementById('easEmail').value.trim();
+  if (!email || !email.includes('@')) { alert('Enter a valid email address'); return; }
+  const provider = detectEmailProvider(email);
+  const acct = { name: name || email.split('@')[0], email, provider, linkedAt: Date.now() };
+  localStorage.setItem(EMAIL_ACCT_KEY, JSON.stringify(acct));
+  // Also sync to sz_mail for SubZero Mail compatibility
+  const existing = JSON.parse(localStorage.getItem('sz_mail') || 'null');
+  localStorage.setItem('sz_mail', JSON.stringify({ ...existing, email, name: acct.name }));
+  showEmailClientLinked();
+  if (typeof addNotif === 'function') {
+    addNotif('📧', 'Email Connected', email + ' linked to SubZero Email', 'screen:emailclient');
+  }
+  alert('✅ ' + email + ' connected!');
+}
+
+function detectEmailProvider(email) {
+  const domain = email.split('@')[1]?.toLowerCase() || '';
+  if (domain.includes('subzero')) return 'SubZero Email';
+  if (domain.includes('gmail')) return 'Gmail';
+  if (domain.includes('outlook') || domain.includes('hotmail') || domain.includes('live')) return 'Outlook';
+  if (domain.includes('yahoo')) return 'Yahoo Mail';
+  if (domain.includes('icloud') || domain.includes('me.com') || domain.includes('mac.com')) return 'iCloud Mail';
+  if (domain.includes('proton')) return 'ProtonMail';
+  return 'Email';
+}
+
+function prefillEmailProvider(type) {
+  document.querySelectorAll('.eas-quick-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const emailInput = document.getElementById('easEmail');
+  const domains = {
+    subzero: '@subzero.website',
+    gmail: '@gmail.com',
+    outlook: '@outlook.com',
+    yahoo: '@yahoo.com',
+    icloud: '@icloud.com',
+    other: ''
+  };
+  const name = document.getElementById('easName').value.trim();
+  if (type === 'other') {
+    emailInput.value = '';
+    emailInput.placeholder = 'you@yourdomain.com';
+  } else {
+    const prefix = name ? name.toLowerCase().replace(/\s+/g, '.') : 'you';
+    emailInput.value = prefix + (domains[type] || '');
+  }
+  emailInput.focus();
+}
+
+function showEmailAccountSetup() {
+  const acct = getEmailAccount();
+  if (acct) {
+    document.getElementById('easName').value = acct.name || '';
+    document.getElementById('easEmail').value = acct.email || '';
+  }
+  document.getElementById('emailAccountSetup').style.display = '';
+  document.getElementById('emailAccountBar').style.display = 'none';
+  document.getElementById('emailTabsBar').style.display = 'none';
+  document.getElementById('emailToolbarBar').style.display = 'none';
+  document.getElementById('emailBodySection').style.display = 'none';
+}
+
+function showEmailClientLinked() {
+  const acct = getEmailAccount();
+  if (!acct) { showEmailAccountSetup(); return; }
+  document.getElementById('eabEmail').textContent = acct.email;
+  document.getElementById('eabProvider').textContent = acct.provider || 'Email';
+  document.getElementById('eabAvatar').textContent = (acct.name || acct.email)[0].toUpperCase();
+  document.getElementById('emailAccountBar').style.display = '';
+  document.getElementById('emailAccountSetup').style.display = 'none';
+  document.getElementById('emailTabsBar').style.display = '';
+  document.getElementById('emailToolbarBar').style.display = '';
+  document.getElementById('emailBodySection').style.display = '';
+}
+
+function getMyEmailInfo() {
+  const acct = getEmailAccount();
+  if (acct) return { email: acct.email, name: acct.name };
+  const sz = JSON.parse(localStorage.getItem('sz_mail') || 'null');
+  if (sz) return { email: sz.email, name: sz.name };
+  return { email: 'me@subzero.app', name: 'Me' };
+}
+
 // Init email client
 function initEmailClient() {
   seedWelcomeEmail();
+  const acct = getEmailAccount();
+  if (acct) {
+    showEmailClientLinked();
+  } else {
+    showEmailAccountSetup();
+  }
   renderEmailList();
   updateEmailBadges();
 }
